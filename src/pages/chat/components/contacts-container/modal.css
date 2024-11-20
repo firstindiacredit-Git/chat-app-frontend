@@ -1,0 +1,24 @@
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    /* Black semi-transparent background */
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Center the modal */
+    background: #1b1c24;
+    /* Slightly darker background */
+    padding: 20px;
+    border-radius: 8px;
+    outline: none;
+    width: 400px;
+    max-height: 80vh;
+    /* Prevent it from getting too tall */
+    overflow-y: auto;
+    /* Scroll if content overflows */
+    margin: 20px;
+    /* Add margin to create space */
+}
