@@ -78,7 +78,7 @@ const CreateChannel = () => {
         </DialogDescription>
         <DialogContent className="bg-[#181920] border-none text-white w-[400px] h-max flex flex-col">
           <DialogHeader>
-            <DialogTitle>Create a new Channel</DialogTitle>
+            <DialogTitle>Create a new Group </DialogTitle>
           </DialogHeader>
           <div>
             <Input
