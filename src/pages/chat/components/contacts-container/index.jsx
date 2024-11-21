@@ -79,7 +79,7 @@ const ContactsContainer = () => {
       </div>
       <div className="my-5">
         <div className="flex items-center justify-between pr-10">
-          <Title text="Channels" />
+          <Title text="Groups" />
           <CreateChannel />
         </div>
         <div className="max-h-[37vh] overflow-y-auto pb-5"> {/* Scrollable section for Channels */}
