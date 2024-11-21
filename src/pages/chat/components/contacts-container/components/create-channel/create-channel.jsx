@@ -68,7 +68,7 @@ const CreateChannel = () => {
             />
           </TooltipTrigger>
           <TooltipContent className="bg-[#1c1b1e] border-none mb-2 p-3">
-            Create New Channel
+            Create New Group
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -82,7 +82,7 @@ const CreateChannel = () => {
           </DialogHeader>
           <div>
             <Input
-              placeholder="Channel Name"
+              placeholder="Group Name"
               className="rounded-lg py-6 px-4 bg-[#2c2e3b] border-none"
               value={channelName}
               onChange={(e) => setChannelName(e.target.value)}
