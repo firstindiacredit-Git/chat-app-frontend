@@ -31,7 +31,7 @@ const AdminUserForm = () => {
       const token = localStorage.getItem("token"); // Get token from cookies
       console.log("Admin Token:", token);
 
-      const response = await axios.post("http://localhost:8000/api/auth/admin/register", formData, {
+      const response = await axios.post("https://chat.pizeonfly.com/api/auth/admin/register", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
