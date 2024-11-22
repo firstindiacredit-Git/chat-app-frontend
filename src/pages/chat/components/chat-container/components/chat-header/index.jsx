@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { RiCloseFill } from "react-icons/ri";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAppStore } from "@/store";
@@ -6,6 +7,23 @@ import { getColor } from "@/lib/utils";
 
 const ChatHeader = () => {
   const { selectedChatData, closeChat, selectedChatType } = useAppStore();
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        closeChat();
+      }
+    };
+
+    // Add keydown event listener
+    document.addEventListener("keydown", handleKeyDown);
+
+    // Cleanup on component unmount
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [closeChat]);
+
   return (
     <div className="h-[10vh] border-b-2 border-[#2f303b] flex items-center justify-between px-20">
       <div className="flex gap-5 items-center">
@@ -21,7 +39,7 @@ const ChatHeader = () => {
                   />
                 ) : (
                   <div
-                    className={`uppercase w-12 h-12 text-lg   border-[1px] ${getColor(
+                    className={`uppercase w-12 h-12 text-lg border-[1px] ${getColor(
                       selectedChatData.color
                     )} flex items-center justify-center rounded-full`}
                   >
@@ -33,7 +51,7 @@ const ChatHeader = () => {
               </Avatar>
             ) : (
               <div
-                className={` bg-[#ffffff22] py-3 px-5 flex items-center justify-center rounded-full`}
+                className={`bg-[#ffffff22] py-3 px-5 flex items-center justify-center rounded-full`}
               >
                 #
               </div>
