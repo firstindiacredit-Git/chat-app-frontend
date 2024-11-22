@@ -124,9 +124,9 @@ const MessageContainer = () => {
           <div
             className={`${
               message.sender !== selectedChatData._id
-                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
-                : "bg-[#2a2b33]/50 text-white/80 border-[#ffffff]/20"
-            } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
+                ? "bg-[#00d670] text-white border-[#ffffff]/20"
+                : "bg-[#ffffff] text-black/90 border-[#ffffff]"
+            } border inline-block px-3 py-2 rounded-2xl my-1 max-w-[50%] break-words`}
           >
             {message.content}
           </div>
@@ -135,9 +135,9 @@ const MessageContainer = () => {
           <div
             className={`${
               message.sender !== selectedChatData._id
-                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
-                : "bg-[#2a2b33]/50 text-white/80 border-[#ffffff]/20"
-            } border inline-block p-4 rounded my-1 lg:max-w-[50%] break-words`}
+                ? "bg-[#00d670]/60 text-white border-[#ffffff]/20"
+                : "bg-[#ffffff] text-black/90 border-[#ffffff]"
+            } border inline-block px-2 py-1 rounded-2xl my-1 max-w-[50%] break-words`}
           >
             {checkIfImage(message.fileUrl) ? (
               <div
@@ -181,15 +181,15 @@ const MessageContainer = () => {
   const renderChannelMessages = (message) => {
     return (
       <div
-        className={`mt-5  ${
+        className={`mt-2  ${
           message.sender._id !== userInfo.id ? "text-left" : "text-right"
         }`}
       >
         {message.messageType === MESSAGE_TYPES.TEXT && (
-      <div
+          <div
             className={`${
               message.sender._id === userInfo.id
-                ? "bg-[#00d670] text-black/90 border-[#ffffff]/20"
+                ? "bg-[#00d670] text-white border-[#ffffff]/20"
                 : "bg-[#ffffff] text-black/90 border-[#ffffff]"
             } border inline-block  px-2 py-1 rounded-2xl -my-1 max-w-[50%] break-words ml-9`}
           >
@@ -200,9 +200,9 @@ const MessageContainer = () => {
           <div
             className={`${
               message.sender._id === userInfo.id
-                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
-                : "bg-[#2a2b33]/50 text-white/80 border-[#ffffff]/20"
-            } border inline-block p-4 rounded my-1 max-w-[50%] break-words ml-9`}
+                ? "bg-[#00d670] text-blue-800 border-[#ffffff]/20"
+                : "bg-[#ffffff] text-black/90 border-[#ffffff]"
+            } border inline-block  px-2 py-1 rounded-2xl -my-1 max-w-[50%] break-words ml-9`}
           >
             {checkIfImage(message.fileUrl) ? (
               <div
