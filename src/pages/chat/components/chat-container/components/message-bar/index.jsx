@@ -133,12 +133,18 @@ const MessageBar = () => {
   return (
     <div className="h-[10vh] bg-[#1c1d25] flex justify-center items-center px-8 gap-6 mb-5">
       <div className="flex-1 flex bg-[#2a2b33] rounded-md items-center gap-5 pr-5">
-        <input
+       <input
           type="text"
           className="flex-1 p-5 bg-transparent rounded-md focus:border-none focus:outline-none"
           placeholder="Enter message"
           value={message}
           onChange={handleMessageChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault(); // Prevents newline in the input field
+              handleSendMessage();
+            }
+          }}
         />
         <button
           className="text-neutral-300 focus:border-none focus:outline-none focus:text-white transition-all duration-300"
