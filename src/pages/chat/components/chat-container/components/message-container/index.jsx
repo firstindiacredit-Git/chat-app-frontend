@@ -186,12 +186,12 @@ const MessageContainer = () => {
         }`}
       >
         {message.messageType === MESSAGE_TYPES.TEXT && (
-          <div
+      <div
             className={`${
               message.sender._id === userInfo.id
-                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
-                : "bg-[#2a2b33]/50 text-white/80 border-[#ffffff]/20"
-            } border inline-block p-4 rounded my-1 max-w-[50%] break-words ml-9`}
+                ? "bg-[#00d670] text-black/90 border-[#ffffff]/20"
+                : "bg-[#ffffff] text-black/90 border-[#ffffff]"
+            } border inline-block  px-2 py-1 rounded-2xl -my-1 max-w-[50%] break-words ml-9`}
           >
             {message.content}
           </div>
