@@ -16,6 +16,7 @@ import { getColor } from "@/lib/utils";
 const ProfileInfo = () => {
   const { userInfo, setUserInfo } = useAppStore();
   const navigate = useNavigate();
+
   const logout = async () => {
     try {
       const response = await apiClient.post(
@@ -33,10 +34,10 @@ const ProfileInfo = () => {
   };
 
   return (
-    <div className=" h-16 flex items-center justify-between px-10 w-full bg-[#2a2b33]">
-      <div className="flex gap-3 items-center justify-center">
+    <div className="h-20 flex items-center justify-between px-6 w-full bg-gradient-to-tr from-[#1e1f25] to-[#292a31] border-t border-[#3b3d48] shadow-inner">
+      <div className="flex gap-4 items-center">
         <div className="w-12 h-12 relative">
-          <Avatar className="w-12 h-12 rounded-full overflow-hidden">
+          <Avatar className="w-12 h-12 rounded-full ring-2 ring-purple-500 shadow-md">
             {userInfo.image ? (
               <AvatarImage
                 src={`${HOST}/${userInfo.image}`}
@@ -45,47 +46,55 @@ const ProfileInfo = () => {
               />
             ) : (
               <div
-                className={`uppercase w-12 h-12 text-lg   border-[1px] ${getColor(
+                className={`uppercase w-12 h-12 text-md font-semibold border ${getColor(
                   userInfo.color
-                )} flex items-center justify-center rounded-full`}
+                )} flex items-center justify-center rounded-full bg-gray-800 text-white`}
               >
                 {userInfo.firstName
-                  ? userInfo.firstName.split("").shift()
-                  : userInfo.email.split("").shift()}
+                  ? userInfo.firstName[0]
+                  : userInfo.email[0]}
               </div>
             )}
           </Avatar>
         </div>
-        <div>
+        <div className="text-white font-medium text-sm">
           {userInfo.firstName && userInfo.lastName
             ? `${userInfo.firstName} ${userInfo.lastName}`
-            : ""}
+            : userInfo.email}
         </div>
       </div>
-      <div className="flex gap-5">
+
+      <div className="flex gap-4 items-center">
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <FiEdit2
-                className="text-purple-500 text-xl font-medium"
+                className="text-purple-400 hover:text-purple-500 text-xl cursor-pointer transition"
                 onClick={() => navigate("/profile")}
               />
             </TooltipTrigger>
-            <TooltipContent className="bg-[#1c1b1e] border-none mb-2 p-3">
-              <p className="text-white">Edit Profile</p>
+            <TooltipContent
+              side="top"
+              className="bg-[#1e1e22] border border-gray-700 text-sm text-white px-3 py-2 rounded shadow-lg"
+            >
+              Edit Profile
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <IoPowerSharp
-                className="text-red-500 text-xl font-medium"
+                className="text-red-500 hover:text-red-600 text-xl cursor-pointer transition"
                 onClick={logout}
               />
             </TooltipTrigger>
-            <TooltipContent className="bg-[#1c1b1e] border-none mb-2 p-3">
-              <p className="text-white">Logout</p>
+            <TooltipContent
+              side="top"
+              className="bg-[#1e1e22] border border-gray-700 text-sm text-white px-3 py-2 rounded shadow-lg"
+            >
+              Logout
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

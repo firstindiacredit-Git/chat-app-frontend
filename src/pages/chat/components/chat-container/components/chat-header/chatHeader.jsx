@@ -25,7 +25,7 @@ const ChatHeader = () => {
   }, [closeChat]);
 
   return (
-    <div className="h-[10vh] border-b-2 border-[#2f303b] flex items-center justify-between px-20">
+    <div className="h-[10vh] border-b-2 border-black flex items-center justify-between px-20 bg-[#111b21]">
       <div className="flex gap-5 items-center">
         <div className="flex gap-3 items-center justify-center">
           <div className="w-12 h-12 relative flex items-center justify-center">

@@ -1,9 +1,14 @@
-// eslint-disable-next-line
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
 import axios from "axios";
-import Cookies from "js-cookie"; // Import the js-cookie library
-import { ToastContainer, toast } from "react-toastify"; // Import ToastContainer and toast
-import 'react-toastify/dist/ReactToastify.css'; // Import default styles
+import Cookies from "js-cookie";
+import Logo from "../../assets/image.png";
+import Background from "../../assets/side1.jpg";
+import Victory from "../../assets/victory.svg";
 
 const AdminUserForm = () => {
   const [formData, setFormData] = useState({
@@ -11,148 +16,166 @@ const AdminUserForm = () => {
     password: "",
     firstName: "",
     lastName: "",
-    role: "user", // default role is user
+    role: "user",
   });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Handle form change
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
+ {/* const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
     try {
-      const token = Cookies.get("adminToken"); // Get token from cookies
-      console.log("Admin Token:", token);
-//eslint-disable-next-line
-      const response = await axios.post("http://localhost:8747/api/auth/admin/register", formData, {
+      const token = Cookies.get("adminToken");
+
+      await axios.post("http://localhost:8000/api/auth/admin/register", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        withCredentials: true, // Send cookies
+        withCredentials: true,
       });
-      
-      // Show success toast notification
-      toast.success("User registered successfully!", {
-        position: "bottom-center", // Centered at the bottom
-        style: {
-          backgroundColor: "white", 
-          color: "black", 
-        },
-        progressStyle: {
-          backgroundColor: "black", // Black sliding progress bar
-        },
-      });
-      
+
+      toast.success("User registered successfully!");
       setFormData({
         email: "",
         password: "",
         firstName: "",
         lastName: "",
         role: "user",
-      }); // Reset form
-    } catch (error) {
-      console.error("Error Response:", error.response);
-
-      // Show error toast notification
-      toast.error(error.response?.data?.message || "Failed to register user", {
-        position: "bottom-center", // Centered at the bottom
-        style: {
-          backgroundColor: "white", 
-          color: "black",
-        },
-        progressStyle: {
-          backgroundColor: "black", // Black sliding progress bar
-        },
       });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  }; */}
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const token = Cookies.get("adminToken");
+  
+      await axios.post("http://localhost:8000/api/auth/admin/register", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
+  
+      toast.success("User registered successfully!");
+  
+      setFormData({
+        email: "",
+        password: "",
+        firstName: "",
+        lastName: "",
+        role: "user",
+      });
+  
+      // 👇 Replace this logic based on your app structure
+      const currentUserRole = Cookies.get("role"); // or get it from context, redux, etc.
+  
+      if (currentUserRole === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/user/home");
+      }
+  
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
+  
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900"> {/* Dark background */}
-      <div className="max-w-md mx-auto mt-10">
-        <h2 className="text-2xl font-bold text-center mb-5 text-white">Register New User</h2>
-
-        <form onSubmit={handleSubmit} className="bg-gray-800 p-6 shadow-md rounded"> {/* Dark form background */}
-          <div className="mb-4">
-            <label className="block text-gray-300">Email</label>
-            <input
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-900">
+    <div className="w-full max-w-3xl bg-gray-900 rounded-3xl shadow-2xl grid xl:grid-cols-2 overflow-hidden">
+  
+      {/* Left Panel with border like login page */}
+      <div className="p-6 xl:p-8 flex flex-col justify-center gap-8 border-t-4 border-l-4 border-b-4 border-purple-600">
+        <div className="flex flex-col items-center gap-4">
+          <img src={Logo} alt="Logo" className="w-[150px] object-contain" />
+          <h1 className="text-3xl font-bold text-white">Register User</h1>
+          <img src={Victory} alt="Victory" className="w-16 h-16" />
+          <p className="text-center text-gray-300 max-w-sm text-sm">
+            Fill out the form to register a new user in the system.
+          </p>
+        </div>
+  
+        {/* Registration Form */}
+        <Tabs defaultValue="register" className="w-full">
+          <TabsContent value="register" className="mt-6 flex flex-col gap-4">
+            <Input
+              placeholder="Email"
               type="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded bg-gray-700 text-white"
               required
+              className="bg-white text-black p-4 rounded-xl border border-gray-600 focus:ring-2 focus:ring-purple-500"
             />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-300">Password</label>
-            <input
+            <Input
+              placeholder="Password"
               type="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded bg-gray-700 text-white"
               required
+              className="bg-white text-black p-4 rounded-xl border border-gray-600 focus:ring-2 focus:ring-purple-500"
             />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-300">First Name</label>
-            <input
+            <Input
+              placeholder="First Name"
               type="text"
               name="firstName"
               value={formData.firstName}
               onChange={handleInputChange}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded bg-gray-700 text-white"
               required
+              className="bg-white text-black p-4 rounded-xl border border-gray-600 focus:ring-2 focus:ring-purple-500"
             />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-300">Last Name</label>
-            <input
+            <Input
+              placeholder="Last Name"
               type="text"
               name="lastName"
               value={formData.lastName}
               onChange={handleInputChange}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded bg-gray-700 text-white"
               required
+              className="bg-white text-black p-4 rounded-xl border border-gray-600 focus:ring-2 focus:ring-purple-500"
             />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-300">Role</label>
             <select
               name="role"
               value={formData.role}
               onChange={handleInputChange}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded bg-gray-700 text-white"
+              className="p-4 rounded-xl border border-gray-600 bg-white text-black focus:ring-2 focus:ring-purple-500"
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
-          </div>
-
-          <button
-            type="submit"
-            className="bg-blue-500 text-white p-2 rounded w-full hover:bg-blue-600 transition"
-          >
-            Register User
-          </button>
-        </form>
-
-        {/* Toast notification container */}
-        <ToastContainer position="bottom-center" /> {/* Centered at the bottom */}
+            <Button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="w-full p-4 rounded-xl bg-purple-600 hover:bg-purple-700 transition text-white text-base font-semibold"
+            >
+              {loading ? "Registering..." : "Register User"}
+            </Button>
+          </TabsContent>
+        </Tabs>
+      </div>
+  
+      {/* Right Panel with border like login page */}
+      <div className="hidden xl:flex items-center justify-center bg-gray-900 border-t-4 border-r-4 border-b-4 border-purple-600">
+        <img src={Background} alt="Illustration" className="object-contain max-h-[650px]" />
       </div>
     </div>
+  </div>
+  
   );
 };
 

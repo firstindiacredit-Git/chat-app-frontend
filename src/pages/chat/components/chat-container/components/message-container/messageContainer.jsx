@@ -102,9 +102,9 @@ const MessageContainer = () => {
       return (
         <div key={index} className="w-full ">
           {showDate && (
-            <div className="text-center  w-full  text-gray-500 my-2">
+            <div className="text-center  w-full  text-gray-400 my-2 ">
               <hr className="boder-1 border-zinc-800" />
-              <div className="-translate-y-3 px-4w bg-[#1C1D25] w-fit m-auto">
+              <div className="-translate-y-3 px-4w bg-black w-fit m-auto">
                 {moment(message.timestamp).format("LL")}
               </div>
             </div>
@@ -127,8 +127,8 @@ const MessageContainer = () => {
           <div
             className={`${
               message.sender !== selectedChatData._id
-                ? "bg-[#8F06FC]/80 text-white border-[#ffffff]/20"
-                : "bg-[#8F06FC]/20 text-white border-[#ffffff]/20"
+                ? "bg-[#005C4B] text-white border-[#005C4B]"
+                : "bg-[#202C33] text-white border-[#202C33]"
             } border inline-block px-3 py-2 text-left rounded-xl my-1 max-w-[50%] break-words`}
           >
             {message.content}
@@ -138,8 +138,8 @@ const MessageContainer = () => {
           <div
             className={`${
               message.sender !== selectedChatData._id
-                ? "bg-[#8F06FC]/80 text-white border-[#ffffff]/20"
-                : "bg-[#8F06FC]/20 text-white border-[#ffffff]/20"
+                ? "bg-[#005C4B] text-white border-[#005C4B]"
+                : "bg-[#202C33] text-white border-[#202C33]"
             } border inline-block  p-1 rounded-2xl my-1 max-w-[50%] break-words`}
           >
             {checkIfImage(message.fileUrl) ? (
@@ -175,7 +175,7 @@ const MessageContainer = () => {
           </div>
         )}
 
-        <div className="text-xs text-gray-600">
+        <div className="text-xs text-gray-500">
           {moment(message.timestamp).format("LT")}
         </div>
       </div>

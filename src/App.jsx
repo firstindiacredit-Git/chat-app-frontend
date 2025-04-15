@@ -11,9 +11,9 @@ import Auth from "@/pages/auth/authLogin";
 import apiClient from "@/lib/api-client";
 import { GET_USERINFO_ROUTE } from "@/lib/constants";
 import { useAppStore } from "@/store";
-  import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
- import AdminUserForm from "./pages/auth/AdminRegistration";
+import AdminUserForm from "./pages/auth/AdminRegistration";
 const PrivateRoute = ({ children }) => {
   const { userInfo } = useAppStore();
   const isAuthenticated = !!userInfo;

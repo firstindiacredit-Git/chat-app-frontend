@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import apiClient from "@/lib/api-client";
 import { LOGIN_ROUTE } from "@/lib/constants";
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +15,7 @@ import { useAppStore } from "@/store";
 const Auth = () => {
   const navigate = useNavigate();
   const { setUserInfo } = useAppStore(); // Correct hook from Zustand or Redux
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false); // Optional: to handle loading state
