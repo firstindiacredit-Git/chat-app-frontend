@@ -193,8 +193,8 @@ const MessageContainer = () => {
           <div
             className={`${
               message.sender._id === userInfo.id
-                ? "bg-[#8F06FC]/80 text-white border-[#ffffff]/20"
-                : "bg-[#8F06FC]/20 text-white border-[#ffffff]/20"
+                ? "bg-[#005C4B] text-white border-[#005C4B]"
+                : "bg-[#202C33] text-white border-[#202C33]"
             } border inline-block  px-2 py-1 rounded-xl -my-1 max-w-[50%] break-words ml-9`}
           >
             {message.content}
@@ -204,8 +204,8 @@ const MessageContainer = () => {
           <div
             className={`${
               message.sender._id === userInfo.id
-                ? "bg-[#8F06FC]/80 text-white border-[#ffffff]/20"
-                : "bg-[#8F06FC]/20 text-white border-[#ffffff]/20"
+                 ? "bg-[#005C4B] text-white border-[#005C4B]"
+                : "bg-[#202C33] text-white border-[#202C33]"
             } border inline-block  px-2 py-1 rounded-xl -my-1 max-w-[50%] break-words ml-9`}
           >
             {checkIfImage(message.fileUrl) ? (
