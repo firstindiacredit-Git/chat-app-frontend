@@ -86,20 +86,23 @@ const Auth = () => {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="login" className="mt-6 flex flex-col gap-4">
-              <Input
-                placeholder="Email"
-                type="email"
-                className="p-4 rounded-xl border border-gray-600 bg-white text-black focus:ring-2 focus:ring-purple-500"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <Input
-                placeholder="Password"
-                type="password"
-                className="p-4 rounded-xl border border-gray-600 bg-white text-black focus:ring-2 focus:ring-purple-500"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+            <Input
+  placeholder="Email"
+  type="email"
+  className="p-4 rounded-xl border border-gray-600 bg-white text-black focus:ring-2 focus:ring-purple-500"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+/>
+<Input
+  placeholder="Password"
+  type="password"
+  className="p-4 rounded-xl border border-gray-600 bg-white text-black focus:ring-2 focus:ring-purple-500"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+/>
+
               <Button
                 onClick={handleLogin}
                 className="w-full p-4 rounded-xl bg-purple-600 hover:bg-purple-700 transition text-white text-base font-semibold"

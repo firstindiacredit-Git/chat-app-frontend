@@ -122,13 +122,13 @@ const ContactsContainer = () => {
 
       {/* Toggle Button Bottom Left */}
       <div className="absolute bottom-4 left-4 z-50">
-        <button onClick={toggleProfileSection} className="text-white hover:text-blue-400">
-          <UserCircle size={32} />
+        <button onClick={toggleProfileSection} className="text-[#cccccc] hover:text-blue-400">
+          <UserCircle size={30} />
         </button>
       </div>
 
       {/* Footer Section */}
-      <div className="fixed bottom-0 left-0 md:w-[35vw] lg:w-[30vw] xl:w-[20vw] bg-[#111b21] border-r border-[#202c33] pb-4 min-h-[100px] transition-all duration-300 overflow-hidden">
+      <div className="fixed bottom-0 left-0 md:w-[35vw] lg:w-[30vw] xl:w-[20vw] bg-[#111b21] border-r border-[#000000] pb-4 min-h-[100px] transition-all duration-300 overflow-hidden">
        {isProfileVisible ? (
         <>
       <div className="my-5 flex justify-center">
@@ -142,7 +142,9 @@ const ContactsContainer = () => {
       </div>
       <ProfileInfo />
     </>
-  ) : null}
+  ) : (
+    <div className="h-[100px]" />
+  )}
 </div>
 
 
