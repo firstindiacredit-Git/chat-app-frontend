@@ -64,7 +64,7 @@ const AdminUserForm = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#1c1d25] p-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-900 p-4">
       <div className="w-full max-w-4xl bg-gray-900 rounded-3xl shadow-2xl flex flex-col md:grid md:grid-cols-2 overflow-hidden border-4 border-purple-500">
 
         {/* Left Panel */}

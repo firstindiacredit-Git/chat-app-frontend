@@ -29,6 +29,7 @@ const AuthRoute = ({ children }) => {
 
 function App() {
   const { userInfo, setUserInfo } = useAppStore();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -43,13 +44,21 @@ function App() {
         }
       } catch (error) {
         setUserInfo(undefined);
+      } finally {
+        setLoading(false);
       }
     };
 
     if (!userInfo) {
       getUserData();
+    } else {
+      setLoading(false);
     }
   }, [userInfo, setUserInfo]);
+
+  if (loading) {
+    return <div className="bg-gray-900 min-h-screen" />; // blank screen while loading
+  }
 
   return (
     <Router>

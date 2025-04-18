@@ -17,7 +17,6 @@ import { MdFolderZip } from "react-icons/md";
 const MessageContainer = () => {
   const [showImage, setShowImage] = useState(false);
   const [imageURL, setImageURL] = useState(null);
-  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
   const {
     selectedChatData,
     setSelectedChatMessages,
@@ -28,17 +27,6 @@ const MessageContainer = () => {
     setIsDownloading,
   } = useAppStore();
   const messageEndRef = useRef(null);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobileView(window.innerWidth < 768);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -141,7 +129,7 @@ const MessageContainer = () => {
               message.sender !== selectedChatData._id
                 ? "bg-[#005C4B] text-white border-[#005C4B]"
                 : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block px-3 py-2 text-left rounded-xl my-1 md:max-w-[50%] max-w-[75%] break-words`}
+            } border inline-block px-3 py-2 text-left rounded-xl my-1 max-w-[50%] break-words`}
           >
             {message.content}
           </div>
@@ -152,7 +140,7 @@ const MessageContainer = () => {
               message.sender !== selectedChatData._id
                 ? "bg-[#005C4B] text-white border-[#005C4B]"
                 : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block p-1 rounded-2xl my-1 md:max-w-[50%] max-w-[75%] break-words`}
+            } border inline-block  p-1 rounded-2xl my-1 max-w-[50%] break-words`}
           >
             {checkIfImage(message.fileUrl) ? (
               <div
@@ -165,18 +153,19 @@ const MessageContainer = () => {
                 <img
                   src={`${HOST}/${message.fileUrl}`}
                   alt=""
-                  className="w-full max-w-[300px] max-h-[300px] md:w-[300px] md:h-[300px] object-contain"
+                  height={300}
+                  width={300}
                   style={{ borderRadius: "13px" }}
                 />
               </div>
             ) : (
-              <div className="flex items-center justify-center md:gap-5 gap-2 flex-wrap md:flex-nowrap">
-                <span className="text-white/80 md:text-3xl text-2xl bg-black/20 rounded-full md:p-3 p-2">
+              <div className="flex items-center justify-center gap-5">
+                <span className="text-white/80 text-3xl bg-black/20 rounded-full p-3">
                   <MdFolderZip />
                 </span>
-                <span className="md:text-base text-sm max-w-[120px] md:max-w-none truncate">{message.fileUrl.split("/").pop()}</span>
+                <span>{message.fileUrl.split("/").pop()}</span>
                 <span
-                  className="bg-black/20 md:p-3 p-2 md:text-2xl text-xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
+                  className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
                   onClick={() => downloadFile(message.fileUrl)}
                 >
                   <IoMdArrowRoundDown />
@@ -206,7 +195,7 @@ const MessageContainer = () => {
               message.sender._id === userInfo.id
                 ? "bg-[#005C4B] text-white border-[#005C4B]"
                 : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block px-2 py-1 rounded-xl -my-1 md:max-w-[50%] max-w-[75%] break-words ml-9`}
+            } border inline-block  px-2 py-1 rounded-xl -my-1 max-w-[50%] break-words ml-9`}
           >
             {message.content}
           </div>
@@ -217,7 +206,7 @@ const MessageContainer = () => {
               message.sender._id === userInfo.id
                  ? "bg-[#005C4B] text-white border-[#005C4B]"
                 : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block px-2 py-1 rounded-xl -my-1 md:max-w-[50%] max-w-[75%] break-words ml-9`}
+            } border inline-block  px-2 py-1 rounded-xl -my-1 max-w-[50%] break-words ml-9`}
           >
             {checkIfImage(message.fileUrl) ? (
               <div
@@ -230,18 +219,18 @@ const MessageContainer = () => {
                 <img
                   src={`${HOST}/${message.fileUrl}`}
                   alt=""
-                  className="w-full max-w-[300px] max-h-[300px] md:w-[300px] md:h-[300px] object-contain"
-                  style={{ borderRadius: "13px" }}
+                  height={300}
+                  width={300}
                 />
               </div>
             ) : (
-              <div className="flex items-center justify-center md:gap-5 gap-2 flex-wrap md:flex-nowrap">
-                <span className="text-white/80 md:text-3xl text-2xl bg-black/20 rounded-full md:p-3 p-2">
+              <div className="flex items-center justify-center gap-5">
+                <span className="text-white/80 text-3xl bg-black/20 rounded-full p-3">
                   <MdFolderZip />
                 </span>
-                <span className="md:text-base text-sm max-w-[120px] md:max-w-none truncate">{message.fileUrl.split("/").pop()}</span>
+                <span>{message.fileUrl.split("/").pop()}</span>
                 <span
-                  className="bg-black/20 md:p-3 p-2 md:text-2xl text-xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
+                  className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
                   onClick={() => downloadFile(message.fileUrl)}
                 >
                   <IoMdArrowRoundDown />
@@ -268,7 +257,7 @@ const MessageContainer = () => {
                 {message.sender.firstName.split("").shift()}
               </AvatarFallback>
             </Avatar>
-            <span className="text-sm text-white/60 truncate max-w-[100px] md:max-w-full">{`${message.sender.firstName} ${message.sender.lastName}`}</span>
+            <span className="text-sm text-white/60">{`${message.sender.firstName} ${message.sender.lastName}`}</span>
 
             <div className="text-xs text-white/30">
               {moment(message.timestamp).format("LT")}
@@ -284,32 +273,37 @@ const MessageContainer = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#1c1d25]">
+    <div className="flex-1 overflow-y-auto scrollbar-hidden p-4 px-8 md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full">
+      {renderMessages()}
+      <div ref={messageEndRef} />
       {showImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
-          <div
-            className="absolute top-5 right-5 text-white text-3xl cursor-pointer"
-            onClick={() => setShowImage(false)}
-          >
-            <IoCloseSharp />
+        <div className="fixed z-[1000] top-0 left-0 h-[100vh] w-[100vw] flex items-center justify-center backdrop-blur-lg flex-col">
+          <div>
+            <img
+              src={`${HOST}/${imageURL}`}
+              className="h-[80vh] w-full bg-cover"
+              alt=""
+            />
           </div>
-          <img
-            src={`${HOST}/${imageURL}`}
-            alt=""
-            className="max-w-[90%] max-h-[90%] object-contain"
-          />
+          <div className="flex gap-5 fixed top-0 mt-5">
+            <button
+              className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
+              onClick={() => downloadFile(imageURL)}
+            >
+              <IoMdArrowRoundDown />
+            </button>
+            <button
+              className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
+              onClick={() => {
+                setShowImage(false);
+                setImageURL(null);
+              }}
+            >
+              <IoCloseSharp />
+            </button>
+          </div>
         </div>
       )}
-      <div className="p-2 md:p-4 pb-16 md:pb-20 flex flex-col overflow-y-auto scrollbar-hidden w-full h-full">
-        {selectedChatMessages.length > 0 ? (
-          renderMessages()
-        ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500 text-sm my-4">
-            No messages yet
-          </div>
-        )}
-        <div ref={messageEndRef} />
-      </div>
     </div>
   );
 };

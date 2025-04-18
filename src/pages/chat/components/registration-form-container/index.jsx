@@ -23,7 +23,7 @@ const RegistrationFormContainer = () => {
   };
   
   return (
-    <div className="flex-1 bg-[#1c1d25] flex flex-col justify-center items-center relative overflow-hidden overflow-y-auto">
+    <div className="flex-1 bg-[#1c1d25] flex flex-col justify-center items-center relative">
       {/* Close Button */}
       <button
         onClick={closeForm}
@@ -33,7 +33,7 @@ const RegistrationFormContainer = () => {
       </button>
       
       {/* Registration Form */}
-      <div className="w-full max-w-4xl px-4 py-8">
+      <div className="w-full max-w-4xl px-4">
         <AdminUserForm />
       </div>
     </div>

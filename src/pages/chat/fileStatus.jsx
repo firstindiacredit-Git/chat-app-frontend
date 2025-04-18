@@ -30,14 +30,7 @@ const Chat = () => {
     window.addEventListener('resize', handleResize);
     handleResize();
     
-    // Add overflow hidden to body to prevent double scrolling
-    document.body.style.overflow = 'hidden';
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      // Restore body overflow when component unmounts
-      document.body.style.overflow = '';
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
   
   useEffect(() => {
@@ -48,16 +41,16 @@ const Chat = () => {
   }, [userInfo, navigate]);
 
   return (
-    <div className="flex h-screen w-screen text-white overflow-hidden bg-[#111b21] fixed inset-0">
+    <div className="flex h-[100vh] w-full text-white overflow-hidden bg-[#111b21]">
       {/* Overlays for file operations */}
       {isUploading && (
-        <div className="h-full w-full fixed top-0 z-50 left-0 bg-black/80 flex items-center justify-center flex-col gap-5">
+        <div className="h-[100vh] w-[100vw] fixed top-0 z-50 left-0 bg-black/80 flex items-center justify-center flex-col gap-5">
           <h5 className="text-5xl animate-pulse">Uploading File</h5>
           {fileUploadProgress}%
         </div>
       )}
       {isDownloading && (
-        <div className="h-full w-full fixed top-0 z-50 left-0 bg-black/80 flex items-center justify-center flex-col gap-5">
+        <div className="h-[100vh] w-[100vw] fixed top-0 z-50 left-0 bg-black/80 flex items-center justify-center flex-col gap-5">
           <h5 className="text-5xl animate-pulse">Downloading File</h5>
           {downloadProgress}%
         </div>

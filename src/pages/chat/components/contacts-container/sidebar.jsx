@@ -165,10 +165,10 @@ const ContactsContainer = () => {
           {activeSection === 'directMessages' && (
             <div className="mt-2 w-full">
               <NewDM 
-                buttonClass="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-8 text-sm flex gap-1 items-center justify-center rounded-md"
+                buttonClass="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-10 flex gap-2 items-center justify-center rounded-md"
                 buttonText={
                   <>
-                    <MessageSquarePlus size={14} />
+                    <MessageSquarePlus size={16} />
                     <span>Add New Message</span>
                   </>
                 } 
@@ -178,10 +178,10 @@ const ContactsContainer = () => {
           {activeSection === 'groups' && (
             <div className="mt-2 w-full">
               <CreateChannel 
-                buttonClass="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-8 text-sm flex gap-1 items-center justify-center rounded-md"
+                buttonClass="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-10 flex gap-2 items-center justify-center rounded-md"
                 buttonText={
                   <>
-                    <Users size={14} />
+                    <Users size={16} />
                     <span>Create New Group</span>
                   </>
                 }
@@ -210,9 +210,9 @@ const ContactsContainer = () => {
             <Button 
               onClick={openRegistrationForm} 
               variant="outline"
-              className="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-8 text-sm flex gap-1 items-center justify-center rounded-md"
+              className="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-10 flex gap-2 items-center justify-center rounded-md"
             >
-              <UserPlus size={14} />
+              <UserPlus size={16} />
               <span>Register User</span>
             </Button>
           </div>

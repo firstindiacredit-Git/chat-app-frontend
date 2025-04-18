@@ -22,16 +22,15 @@ const ChatContainer = () => {
   }, []);
   
   return (
-    <div 
-      className={`
-        flex-1 flex flex-col h-full overflow-hidden
-        ${isMobileView ? 'w-full' : 'md:w-auto'}
-        duration-1000 transition-all
-      `}
-    >
+    <div className={`
+      ${isMobileView ? 'fixed top-0 left-0 h-[100vh] w-[100vw] z-10' : 'md:static md:flex-1'}
+      bg-[#1c1d25] flex flex-col
+    `}>
       <ChatHeader />
       <MessageContainer />
-      <MessageBar />
+      <div className="shadow border-t border-black bg-[#111b21]">
+        <MessageBar />
+      </div>
     </div>
   );
 };

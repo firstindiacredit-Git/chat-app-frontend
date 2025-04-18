@@ -17,28 +17,26 @@ const EmptyChatContainer = () => {
   
   return (
     <div className={`
-      ${isMobileView ? 'hidden' : 'flex-1 md:bg-[#1c1d25] md:flex flex-col items-center justify-center overflow-hidden'} 
+      ${isMobileView ? 'hidden' : 'flex-1 md:bg-[#1c1d25] md:flex flex-col justify-center items-center'} 
       duration-1000 transition-all
     `}>
-      <div className="max-w-full px-4">
-        <LottieAnimation />
-        <div className="text-opacity-80 text-white flex flex-col gap-5 items-center mt-6 lg:text-3xl text-2xl transition-all duration-1000 text-center">
-          <h3 className="poppins-medium">
-            Hi
-            <span className="text-purple-500">!</span> Welcome to
-            &nbsp;
-            <span style={{
-              background: 'linear-gradient(to right,#f74271,#4a89fd)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              fontSize: '2.5rem'
-            }}>
-              Pizeonfly
-            </span>
-            &nbsp;
-            Chat App<span className="text-purple-500">.</span>
-          </h3>
-        </div>
+      <LottieAnimation />
+      <div className="text-opacity-80 text-white flex flex-col gap-5 items-center mt-10 lg:text-4xl text-3xl transition-all duration-1000 text-center">
+        <h3 className="poppins-medium">
+          Hi
+          <span className="text-purple-500">!</span> Welcome to
+          &nbsp;
+          <span style={{
+            background: 'linear-gradient(to right,#f74271,#4a89fd)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            fontSize: '3rem' // Adjust the font size as needed
+          }}>
+            Pizeonfly
+          </span>
+          &nbsp;
+          Chat App<span className="text-purple-500">.</span>
+        </h3>
       </div>
     </div>
   );
