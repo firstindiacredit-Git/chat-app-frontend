@@ -32,7 +32,7 @@ const AdminUserForm = () => {
     try {
       const token = Cookies.get("adminToken");
 
-      await axios.post("http://localhost:8000/api/auth/admin/register", formData, {
+      await axios.post("https://chat.pizeonfly.com/api/auth/admin/register", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
