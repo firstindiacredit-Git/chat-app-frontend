@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ContactList from "@/components/common/contact-list";
 import Logo from "@/components/common/logo";
 import ProfileInfo from "./components/profile-info/profile";
@@ -13,11 +13,7 @@ import { useAppStore } from "@/store";
 import NewDM from "./components/new-dm/new-dm";
 import CreateChannel from "./components/create-channel/create-channel";
 import { Button } from "@/components/ui/button";
-import Modal from "react-modal";
-import AdminUserForm from "@/pages/auth/AdminRegistration";
-import { UserCircle } from "lucide-react"; // 🔥 NEW icon
-
-Modal.setAppElement("#root");
+import { ArrowLeft, UserPlus, MessageSquarePlus, Users } from "lucide-react";
 
 const ContactsContainer = () => {
   const {
@@ -26,11 +22,45 @@ const ContactsContainer = () => {
     channels,
     setChannels,
     userInfo,
+    selectedChatType,
+    setSelectedChatType,
+    showRegistrationForm,
+    setShowRegistrationForm
   } = useAppStore();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('directMessages');
-  const [isProfileVisible, setIsProfileVisible] = useState(false); // 🔥 NEW STATE
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+
+  const newDMRef = useRef(null);
+  const createChannelRef = useRef(null);
+
+  // Handle responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobileView(mobile);
+      
+      // On mobile, hide sidebar when chat is selected
+      if (mobile && (selectedChatType || showRegistrationForm)) {
+        setSidebarVisible(false);
+      } else {
+        setSidebarVisible(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial check
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, [selectedChatType, showRegistrationForm]);
+
+  // Hide sidebar when chat is selected on mobile
+  useEffect(() => {
+    if (isMobileView && (selectedChatType || showRegistrationForm)) {
+      setSidebarVisible(false);
+    }
+  }, [selectedChatType, isMobileView, showRegistrationForm]);
 
   useEffect(() => {
     const getContactsWithMessages = async () => {
@@ -56,128 +86,143 @@ const ContactsContainer = () => {
     getChannels();
   }, [setChannels]);
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openRegistrationForm = () => {
+    setSelectedChatType(undefined); // Close any open chat
+    setShowRegistrationForm(true);
+  };
+  
+  // Back button for mobile view
+  const handleBackToSidebar = () => {
+    setSidebarVisible(true);
+    if (isMobileView) {
+      setSelectedChatType(undefined);
+      setShowRegistrationForm(false);
+    }
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  // Show back button on mobile when sidebar is hidden
+  if (isMobileView && !sidebarVisible) {
+    return (
+      <div className="fixed z-30 top-3 left-3">
+        <Button 
+          onClick={handleBackToSidebar} 
+          className="rounded-full h-10 w-10 p-0 bg-[#111b21] hover:bg-[#2a3942] text-white"
+        >
+          <ArrowLeft size={20} />
+        </Button>
+      </div>
+    );
+  }
 
-  const toggleProfileSection = () => {
-    setIsProfileVisible(prev => !prev); // 🔥 TOGGLE
-  };
-
+  // Main sidebar component
   return (
-    <div className="relative md:w-[35vw] mb-28 lg:w-[30vw] xl:w-[20vw] w-full max-h-screen overflow-y-auto bg-[#111b21] border-r border-black">
+    <div className={`
+      ${isMobileView ? 'fixed top-0 left-0 h-full z-20' : 'relative'} 
+      ${isMobileView && !sidebarVisible ? 'hidden' : 'block'} 
+      md:w-[35vw] lg:w-[30vw] xl:w-[20vw] w-full 
+      max-h-screen overflow-hidden flex flex-col bg-[#111b21] border-r border-black
+      transition-all duration-300
+    `}>
       {/* Header */}
-      <div className="pt-0">
+      <div className="pt-0 shrink-0">
         <Logo />
         <div className="w-full h-[1px] bg-[#111b21] -mt-1.9"></div>
       </div>
 
       {/* Navigation */}
-      <div className="flex flex-col h-[calc(100vh-180px)]">
-        <div className="flex flex-col px-2">
+      <div className="flex flex-col h-full overflow-hidden">
+        <div className="flex flex-col px-2 shrink-0">
           <div className="flex items-center gap-2">
             <div 
               className={`relative cursor-pointer flex items-center gap-2 py-2 px-3 rounded-lg transition-all ${
                 activeSection === 'directMessages' 
-                ? 'text-white bg-[#2a3942]' 
-                : 'text-gray-400 hover:bg-[#2a3942]'
+                  ? 'text-white bg-[#2a3942]' 
+                  : 'text-gray-400 hover:bg-[#2a3942]'
               }`}
               onClick={() => setActiveSection('directMessages')}
             >
               <Title text="Messages" active={activeSection === 'directMessages'} />
-              <NewDM />
+              <div ref={newDMRef}>
+                <NewDM />
+              </div>
             </div>
             <div 
               className={`relative cursor-pointer flex items-center gap-2 py-2 px-3 rounded-lg transition-all ${
                 activeSection === 'groups' 
-                ? 'text-white bg-[#2a3942]' 
-                : 'text-gray-400 hover:bg-[#2a3942]'
+                  ? 'text-white bg-[#2a3942]' 
+                  : 'text-gray-400 hover:bg-[#2a3942]'
               }`}
               onClick={() => setActiveSection('groups')}
             >
               <Title text="Groups" active={activeSection === 'groups'} />
-              <CreateChannel />
+              <div ref={createChannelRef}>
+                <CreateChannel />
+              </div>
             </div>
           </div>
+
+          {/* Action Buttons */}
+          {activeSection === 'directMessages' && (
+            <div className="mt-2 w-full">
+              <NewDM 
+                buttonClass="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-8 text-sm flex gap-1 items-center justify-center rounded-md"
+                buttonText={
+                  <>
+                    <MessageSquarePlus size={14} />
+                    <span>Add New Message</span>
+                  </>
+                } 
+              />
+            </div>
+          )}
+          {activeSection === 'groups' && (
+            <div className="mt-2 w-full">
+              <CreateChannel 
+                buttonClass="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-8 text-sm flex gap-1 items-center justify-center rounded-md"
+                buttonText={
+                  <>
+                    <Users size={14} />
+                    <span>Create New Group</span>
+                  </>
+                }
+              />
+            </div>
+          )}
         </div>
 
-        {/* Contact List */}
-        <div className="flex-1 overflow-hidden px-2">
+        {/* Contact List - Make this flex-grow to push footer to bottom */}
+        <div className="flex-1 overflow-y-auto scrollbar-hidden px-2 pb-2">
           {activeSection === 'directMessages' && (
-            <div className="h-full overflow-y-auto">
+            <div className="h-full">
               <ContactList contacts={directMessagesContacts} />
             </div>
           )}
           {activeSection === 'groups' && (
-            <div className="h-full overflow-y-auto">
+            <div className="h-full">
               <ContactList contacts={channels} isChannel />
             </div>
           )}
         </div>
-      </div>
 
-      {/* Toggle Button Bottom Left */}
-      <div className="absolute bottom-4 left-4 z-50">
-        <button onClick={toggleProfileSection} className="text-[#cccccc] hover:text-blue-400">
-          <UserCircle size={30} />
-        </button>
-      </div>
-
-      {/* Footer Section */}
-      <div className="fixed bottom-0 left-0 md:w-[35vw] lg:w-[30vw] xl:w-[20vw] bg-[#111b21] border-r border-[#000000] pb-4 min-h-[100px] transition-all duration-300 overflow-hidden">
-       {isProfileVisible ? (
-        <>
-      <div className="my-5 flex justify-center">
-        {userInfo.role === "admin" ? (
-          <Button onClick={openModal} className="rounded-full p-4">
-            Register User
-          </Button>
-        ) : (
-          <div className="h-[56px] w-full" />
-        )}
-      </div>
-      <ProfileInfo />
-    </>
-  ) : (
-    <div className="h-[100px]" />
-  )}
-</div>
-
-
-      {/* Modal for Register User */}
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        contentLabel="Register User"
-        className="fixed inset-0 z-50 bg-white overflow-y-auto"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-40 z-40"
-      >
-        <div className="min-h-screen w-full flex">
-          <div className="hidden md:block md:w-[35vw] lg:w-[30vw] xl:w-[20vw] bg-[#111b21] border-r border-[#202c33]">
-            <div className="h-full p-6">
-              <Logo />
-              <div className="w-full h-[2px] bg-[#202c33] mt-4 mb-6"></div>
-              <ProfileInfo />
-            </div>
-          </div>
-
-          <div className="flex-1 from-purple-100 bg-gray-900 p-8 relative overflow-auto border-t border-r border-b border-purple-600">
-            <button
-              onClick={closeModal}
-              className="absolute top-6 right-6 text-gray-600 text-3xl font-bold hover:text-black"
+        {/* Admin Register Button - Before Profile */}
+        {userInfo.role === "admin" && (
+          <div className="px-4 py-2 border-t border-[#2a3942] flex justify-center shrink-0">
+            <Button 
+              onClick={openRegistrationForm} 
+              variant="outline"
+              className="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-8 text-sm flex gap-1 items-center justify-center rounded-md"
             >
-              &times;
-            </button>
-            <div className="max-w-4xl mx-auto mt-12">
-              <AdminUserForm />
-            </div>
+              <UserPlus size={14} />
+              <span>Register User</span>
+            </Button>
           </div>
+        )}
+
+        {/* Footer Section - Always at bottom */}
+        <div className="shrink-0 border-t border-[#2a3942] w-full bg-[#111b21]">
+          <ProfileInfo />
         </div>
-      </Modal>
+      </div>
     </div>
   );
 };

@@ -12,10 +12,23 @@ import { FiEdit2 } from "react-icons/fi";
 import { IoPowerSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { getColor } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 const ProfileInfo = () => {
   const { userInfo, setUserInfo } = useAppStore();
   const navigate = useNavigate();
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const logout = async () => {
     try {
@@ -34,10 +47,10 @@ const ProfileInfo = () => {
   };
 
   return (
-    <div className="h-20 flex items-center justify-between px-6 w-full bg-gradient-to-tr from-[#1e1f25] to-[#292a31] border-t border-[#3b3d48] shadow-inner">
-      <div className="flex gap-4 items-center">
-        <div className="w-12 h-12 relative">
-          <Avatar className="w-12 h-12 rounded-full ring-2 ring-purple-500 shadow-md">
+    <div className="w-full py-3 px-4 flex items-center justify-between bg-gradient-to-tr from-[#1e1f25] to-[#292a31] shadow-inner">
+      <div className="flex gap-3 items-center">
+        <div className="relative">
+          <Avatar className={`${isMobileView ? 'w-10 h-10' : 'w-12 h-12'} rounded-full shadow-md`}>
             {userInfo.image ? (
               <AvatarImage
                 src={`${HOST}/${userInfo.image}`}
@@ -46,7 +59,7 @@ const ProfileInfo = () => {
               />
             ) : (
               <div
-                className={`uppercase w-12 h-12 text-md font-semibold border ${getColor(
+                className={`uppercase ${isMobileView ? 'w-10 h-10 text-sm' : 'w-12 h-12 text-md'} font-semibold border ${getColor(
                   userInfo.color
                 )} flex items-center justify-center rounded-full bg-gray-800 text-white`}
               >
@@ -57,19 +70,20 @@ const ProfileInfo = () => {
             )}
           </Avatar>
         </div>
-        <div className="text-white font-medium text-sm">
+        <div className={`text-white font-medium ${isMobileView ? 'text-xs max-w-[120px]' : 'text-sm'} truncate`}>
           {userInfo.firstName && userInfo.lastName
             ? `${userInfo.firstName} ${userInfo.lastName}`
             : userInfo.email}
         </div>
       </div>
 
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-3 items-center">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <FiEdit2
-                className="text-purple-400 hover:text-purple-500 text-xl cursor-pointer transition"
+                className="text-purple-400 hover:text-purple-500 cursor-pointer transition"
+                size={isMobileView ? 18 : 20}
                 onClick={() => navigate("/profile")}
               />
             </TooltipTrigger>
@@ -86,7 +100,8 @@ const ProfileInfo = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <IoPowerSharp
-                className="text-red-500 hover:text-red-600 text-xl cursor-pointer transition"
+                className="text-red-500 hover:text-red-600 cursor-pointer transition"
+                size={isMobileView ? 18 : 20}
                 onClick={logout}
               />
             </TooltipTrigger>

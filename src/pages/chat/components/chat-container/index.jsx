@@ -1,17 +1,37 @@
 // import React from "react";
 
+import { useEffect, useState } from "react";
 import ChatHeader from "./components/chat-header/chatHeader";
 import MessageBar from "./components/message-bar/messageBar";
 import MessageContainer from "./components/message-container/messageContainer";
+import { useAppStore } from "@/store";
 
 const ChatContainer = () => {
+  const { selectedChatType } = useAppStore();
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   return (
-    <div className="fixed top-0 h-[100vh] w-[100vw] bg-[#1c1d25] flex flex-col md:static md:flex-1">
+    <div 
+      className={`
+        flex-1 flex flex-col h-full overflow-hidden
+        ${isMobileView ? 'w-full' : 'md:w-auto'}
+        duration-1000 transition-all
+      `}
+    >
       <ChatHeader />
       <MessageContainer />
-      <div className="shadow border-t border-black bg-[#111b21]">
-        <MessageBar />
-      </div>
+      <MessageBar />
     </div>
   );
 };

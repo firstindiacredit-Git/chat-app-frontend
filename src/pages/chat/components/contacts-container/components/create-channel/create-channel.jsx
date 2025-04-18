@@ -21,7 +21,7 @@ import { useSocket } from "@/contexts/SocketContext";
 import { useAppStore } from "@/store";
 import { Input } from "@/components/ui/input";
 
-const CreateChannel = () => {
+const CreateChannel = ({ buttonClass, buttonText }) => {
   const [newChannelModal, setNewChannelModal] = useState(false);
   const [allContacts, setAllContacts] = useState([]);
   const [selectedContacts, setSelectedContacts] = useState([]);
@@ -59,19 +59,30 @@ const CreateChannel = () => {
 
   return (
     <>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <FaPlus
-              className=" text-neutral-400 font-light text-opacity-90 text-sm hover:text-neutral-100 cursor-pointer transition-all duration-300"
-              onClick={() => setNewChannelModal(true)}
-            />
-          </TooltipTrigger>
-          <TooltipContent className="bg-[#1c1b1e] border-none mb-2 p-3">
-            Create New Group
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      {buttonClass && buttonText ? (
+        <Button 
+          variant="outline"
+          className={buttonClass}
+          onClick={() => setNewChannelModal(true)}
+        >
+          {buttonText}
+        </Button>
+      ) : (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <FaPlus
+                className=" text-neutral-400 font-light text-opacity-90 text-sm hover:text-neutral-100 cursor-pointer transition-all duration-300"
+                onClick={() => setNewChannelModal(true)}
+              />
+            </TooltipTrigger>
+            <TooltipContent className="bg-[#1c1b1e] border-none mb-2 p-3">
+              Create New Group
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+      
       <Dialog open={newChannelModal} onOpenChange={setNewChannelModal}>
         <DialogDescription className="hidden">
           Please insert details

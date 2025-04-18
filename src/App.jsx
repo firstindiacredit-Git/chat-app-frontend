@@ -14,6 +14,7 @@ import { useAppStore } from "@/store";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdminUserForm from "./pages/auth/AdminRegistration";
+
 const PrivateRoute = ({ children }) => {
   const { userInfo } = useAppStore();
   const isAuthenticated = !!userInfo;
@@ -28,7 +29,6 @@ const AuthRoute = ({ children }) => {
 
 function App() {
   const { userInfo, setUserInfo } = useAppStore();
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -43,21 +43,13 @@ function App() {
         }
       } catch (error) {
         setUserInfo(undefined);
-      } finally {
-        setLoading(false);
       }
     };
 
     if (!userInfo) {
       getUserData();
-    } else {
-      setLoading(false);
     }
   }, [userInfo, setUserInfo]);
-
-  if (loading) {
-    return <div>Loading...</div>; // Show a loading indicator while fetching user data
-  }
 
   return (
     <Router>
@@ -75,8 +67,7 @@ function App() {
           element={
             <PrivateRoute>
               <Chat />
-               
-             <ToastContainer/>
+              <ToastContainer />
             </PrivateRoute>
           }
         />
@@ -88,7 +79,7 @@ function App() {
             </PrivateRoute>
           }
         />
-         <Route path="/admin/register" element={<AdminUserForm />} />
+        <Route path="/admin/register" element={<AdminUserForm />} />
         <Route path="*" element={<Navigate to="/auth" />} />
       </Routes>
     </Router>

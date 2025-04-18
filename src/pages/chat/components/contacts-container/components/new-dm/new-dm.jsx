@@ -23,8 +23,9 @@ import { animationDefaultOptions, getColor } from "@/lib/utils";
 import Lottie from "react-lottie";
 //eslint-disable-next-line
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 
-const NewDM = () => {
+const NewDM = ({ buttonClass, buttonText }) => {
   const [searchedContacts, setsearchedContacts] = useState([]);
   const [allContacts, setAllContacts] = useState([]);
   const [openNewContactModal, setOpenNewContactModal] = useState(false);
@@ -80,19 +81,29 @@ const NewDM = () => {
 
   return (
     <>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <FaPlus
-              className=" text-neutral-400 font-light text-opacity-90 text-sm hover:text-neutral-100 cursor-pointer transition-all duration-300"
-              onClick={() => setOpenNewContactModal(true)}
-            />
-          </TooltipTrigger>
-          <TooltipContent className="bg-[#1c1b1e] border-none mb-2 p-3">
-            Select New Contact
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      {buttonClass && buttonText ? (
+        <Button 
+          variant="outline"
+          className={buttonClass}
+          onClick={() => setOpenNewContactModal(true)}
+        >
+          {buttonText}
+        </Button>
+      ) : (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <FaPlus
+                className=" text-neutral-400 font-light text-opacity-90 text-sm hover:text-neutral-100 cursor-pointer transition-all duration-300"
+                onClick={() => setOpenNewContactModal(true)}
+              />
+            </TooltipTrigger>
+            <TooltipContent className="bg-[#1c1b1e] border-none mb-2 p-3">
+              Select New Contact
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
 
       <Dialog open={openNewContactModal} onOpenChange={setOpenNewContactModal}>
         <DialogContent className="bg-[#181920] border-none text-white w-[400px] h-[400px] flex flex-col">

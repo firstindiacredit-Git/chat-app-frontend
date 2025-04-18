@@ -8,6 +8,7 @@ export const createChatSlice = (set, get) => ({
   fileUploadProgress: 0,
   isDownloading: false,
   downloadProgress: 0,
+  showRegistrationForm: false,
   setIsUploading: (isUploading) => set({ isUploading }),
   setFileUploadProgress: (fileUploadProgress) => set({ fileUploadProgress }),
   setIsDownloading: (isDownloading) => set({ isDownloading }),
@@ -19,6 +20,8 @@ export const createChatSlice = (set, get) => ({
     set({ selectedChatMessages }),
   setDirectMessagesContacts: (directMessagesContacts) =>
     set({ directMessagesContacts }),
+  setShowRegistrationForm: (showRegistrationForm) => 
+    set({ showRegistrationForm }),
   closeChat: () =>
     set({
       selectedChatData: undefined,
