@@ -53,7 +53,12 @@ const Auth = () => {
         toast.error("Login failed. Please try again.");
       }
     } catch (error) {
-      toast.error("Login failed. Please check your credentials.");
+      if (error.response) {
+        toast.error(`Login failed: ${error.response.data}`);
+        console.error("Login error response:", error.response.data);
+      } else {
+        toast.error("Login failed. Please check your credentials.");
+      }
       console.error("Login error:", error);
     } finally {
       setLoading(false);
@@ -61,8 +66,8 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-900 p-4">
-      <div className="w-full max-w-6xl bg-gray-900 rounded-3xl shadow-2xl flex flex-col md:grid md:grid-cols-2 overflow-hidden border-4 border-purple-500">
+    <div className="h-screen w-screen flex items-center justify-center bg-gray-900 overflow-hidden">
+      <div className="w-full max-w-6xl bg-gray-900 rounded-3xl shadow-2xl flex flex-col md:grid md:grid-cols-2 overflow-hidden border-4 border-purple-500 m-4">
       
         {/* Left Panel */}
         <div className="p-6 md:p-10 flex flex-col justify-center gap-8">
@@ -78,13 +83,13 @@ const Auth = () => {
 
           {/* Login Form */}
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="flex justify-center w-full border-b border-gray-700">
-              <TabsTrigger
+             <TabsList className="flex justify-center w-full border-b border-gray-700">Login
+             {/* <TabsTrigger
                 value="login"
                 className="text-gray-300 w-full text-lg pb-2 data-[state=active]:text-purple-600 data-[state=active]:border-b-4 data-[state=active]:border-purple-500 data-[state=active]:font-semibold"
-              >
+              > *
                 Login
-              </TabsTrigger>
+              </TabsTrigger>*/}
             </TabsList>
             <TabsContent value="login" className="mt-6 flex flex-col gap-4">
               <Input

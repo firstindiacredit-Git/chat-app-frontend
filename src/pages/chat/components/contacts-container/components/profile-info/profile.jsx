@@ -50,12 +50,12 @@ const ProfileInfo = () => {
     <div className="w-full py-3 px-4 flex items-center justify-between bg-gradient-to-tr from-[#1e1f25] to-[#292a31] shadow-inner">
       <div className="flex gap-3 items-center">
         <div className="relative">
-          <Avatar className={`${isMobileView ? 'w-10 h-10' : 'w-12 h-12'} rounded-full shadow-md`}>
+          <Avatar className={`${isMobileView ? 'w-10 h-10' : 'w-12 h-12'} rounded-full shadow-md overflow-hidden flex items-center justify-center`}>
             {userInfo.image ? (
               <AvatarImage
                 src={`${HOST}/${userInfo.image}`}
                 alt="profile"
-                className="object-cover w-full h-full bg-black rounded-full"
+                className={`object-cover ${isMobileView ? 'w-10 h-10' : 'w-12 h-12'} bg-black rounded-full`}
               />
             ) : (
               <div
