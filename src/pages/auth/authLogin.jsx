@@ -73,18 +73,18 @@ const Auth = () => {
 
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-gray-900 overflow-hidden">
-      <div className="w-full max-w-6xl bg-gray-900 rounded-3xl shadow-2xl flex flex-col md:grid md:grid-cols-2 overflow-hidden border-4 border-purple-600 m-4">
+      <div className="w-full max-w-4xl bg-gray-900 rounded-3xl shadow-2xl flex flex-col md:grid md:grid-cols-2 overflow-hidden border-4 border-purple-600 m-4">
       
         {/* Left Panel */}
-        <div className="p-6 md:p-10 flex flex-col justify-center gap-8 relative">
+        <div className="p-5 md:p-8 flex flex-col justify-center gap-6 relative">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-purple-900/20 to-transparent pointer-events-none"></div>
 
-          <div className="flex flex-col items-center gap-4 relative z-10">
-            <div className="w-[120px] md:w-[150px] h-[120px] md:h-[150px] rounded-full bg-gradient-to-br from-purple-500 to-purple-800 flex items-center justify-center p-4 shadow-lg">
+          <div className="flex flex-col items-center gap-3 relative z-10">
+            <div className="w-[100px] md:w-[120px] h-[100px] md:h-[120px] rounded-full bg-gradient-to-br from-purple-500 to-purple-800 flex items-center justify-center p-4 shadow-lg">
               <img src={Logo} alt="Logo" className="w-full object-contain" />
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-white mt-2">Welcome Back</h1>
-            <img src={Victory} alt="Victory" className="w-12 h-12 md:w-16 md:h-16" />
+            <img src={Victory} alt="Victory" className="w-10 h-10 md:w-12 md:h-12" />
             <p className="text-center text-gray-300 max-w-sm text-sm md:text-base">
               Fill in your credentials to get started with our chat app.
             </p>
@@ -95,24 +95,24 @@ const Auth = () => {
              <TabsList className="flex justify-center w-full border-b border-gray-700 bg-transparent">
                <span className="text-white text-xl font-medium">Login</span>
              </TabsList>
-            <TabsContent value="login" className="mt-8 flex flex-col gap-5">
+            <TabsContent value="login" className="mt-6 flex flex-col gap-4">
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
+                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
                 <Input
                   placeholder="Email"
                   type="email"
-                  className="p-4 pl-12 rounded-xl border border-gray-600 bg-gray-800/50 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent h-12 shadow-md"
+                  className="p-3 pl-12 rounded-xl border border-gray-600 bg-gray-800/50 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent h-11 shadow-md"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleLogin()}
                 />
               </div>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
                 <Input
                   placeholder="Password"
                   type={showPassword ? "text" : "password"}
-                  className="p-4 pl-12 pr-12 rounded-xl border border-gray-600 bg-gray-800/50 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent h-12 shadow-md"
+                  className="p-3 pl-12 pr-12 rounded-xl border border-gray-600 bg-gray-800/50 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent h-11 shadow-md"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleLogin()}
@@ -123,19 +123,19 @@ const Auth = () => {
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors focus:outline-none"
                 >
                   {showPassword ? 
-                    <EyeOff size={18} className="text-purple-300" /> : 
-                    <Eye size={18} className="text-purple-300" />
+                    <EyeOff size={16} className="text-purple-300" /> : 
+                    <Eye size={16} className="text-purple-300" />
                   }
                 </button>
               </div>
               <Button
                 onClick={handleLogin}
-                className="w-full p-4 rounded-xl bg-purple-600 hover:bg-purple-700 transition text-white text-base font-semibold h-12 mt-2 shadow-lg"
+                className="w-full p-3 rounded-xl bg-purple-600 hover:bg-purple-700 transition text-white text-base font-semibold h-11 mt-2 shadow-lg"
                 disabled={loading}
               >
                 {loading ? "Logging in..." : "Login"}
               </Button>
-              <div className="h-1 w-1/3 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto mt-4"></div>
+              <div className="h-1 w-1/3 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto mt-2"></div>
             </TabsContent>
           </Tabs>
         </div>
