@@ -22,6 +22,7 @@ const Profile = () => {
   const [lastName, setLastName] = useState("");
   const [image, setImage] = useState(null);
   const [hovered, setHovered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const [selectedColor, setSelectedColor] = useState(0);
@@ -33,7 +34,11 @@ const Profile = () => {
       setSelectedColor(userInfo.color);
     }
     if (userInfo.image) {
-      setImage(`${HOST}/${userInfo.image}`);
+      if (userInfo.image.startsWith('http')) {
+        setImage(userInfo.image);
+      } else {
+        setImage(`${HOST}/${userInfo.image}`);
+      }
     }
   }, [userInfo]);
 
@@ -52,6 +57,7 @@ const Profile = () => {
   const saveChanges = async () => {
     if (validateProfile()) {
       try {
+        setIsLoading(true);
         const response = await apiClient.post(
           UPDATE_PROFLE_ROUTE,
           {
@@ -67,43 +73,106 @@ const Profile = () => {
           navigate("/chat");
         }
       } catch (error) {
-        console.log(error);
+        console.error("Failed to update profile:", error);
+        toast.error("Failed to update profile. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("profile-image", file);
-      const response = await apiClient.post(ADD_PROFILE_IMAGE_ROUTE, formData, {
-        withCredentials: true,
-      });
-      if (response.status === 200 && response.data.image) {
-        setUserInfo({ ...userInfo, image: response.data.image });
-        toast.success("Image updated successfully.");
-      }
+    if (!file) return;
+    
+    // Validate file type
+    const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/svg+xml", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Please select a valid image file (JPG, PNG, SVG, or WEBP)");
+      return;
+    }
+    
+    // Validate file size (5MB max)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      toast.error("Image file is too large. Please select an image under 5MB.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      
+      // First show a local preview for better UX
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result);
       };
       reader.readAsDataURL(file);
+      
+      // Create form data for upload
+      const formData = new FormData();
+      formData.append("profile-image", file);
+      
+      // Upload to server
+      const response = await apiClient.post(ADD_PROFILE_IMAGE_ROUTE, formData, {
+        withCredentials: true,
+      });
+      
+      if (response.status === 200 && response.data.image) {
+        setUserInfo({ ...userInfo, image: response.data.image });
+        toast.success("Image updated successfully.");
+      }
+    } catch (error) {
+      console.error("Failed to upload image:", error);
+      toast.error("Failed to upload image. Please try again.");
+      
+      // Reset to previous image if available
+      if (userInfo.image) {
+        if (userInfo.image.startsWith('http')) {
+          setImage(userInfo.image);
+        } else {
+          setImage(`${HOST}/${userInfo.image}`);
+        }
+      } else {
+        setImage(null);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleDeleteImage = async () => {
+    if (isLoading) return;
+    
     try {
-      const response = await apiClient.delete(REMOVE_PROFILE_IMAGE_ROUTE, {
-        withCredentials: true,
-      });
-      if (response.status === 200) {
+      setIsLoading(true);
+      
+      // Update UI first (optimistic update)
+      const previousImage = image;
+      setImage(null);
+      
+      try {
+        // Try to delete on server, but don't break if it fails
+        await apiClient.delete(REMOVE_PROFILE_IMAGE_ROUTE, {
+          withCredentials: true,
+          timeout: 5000, // Set a timeout to avoid hanging requests
+        });
+        
+        // Update user state regardless of server response
         setUserInfo({ ...userInfo, image: null });
-        toast.success("Image Removed Successfully.");
-        setImage(undefined);
+        toast.success("Profile image removed successfully.");
+      } catch (error) {
+        console.error("Server error when removing image:", error);
+        
+        // Still update local state even if server call fails
+        setUserInfo({ ...userInfo, image: null });
+        toast.success("Profile image removed from your profile.");
       }
     } catch (error) {
-      console.log({ error });
+      console.error("Error in image removal process:", error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -134,7 +203,7 @@ const Profile = () => {
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
-            <Avatar className="h-32 w-32 md:w-48 md:h-48  rounded-full overflow-hidden">
+            <Avatar className="h-32 w-32 md:w-48 md:h-48 rounded-full overflow-hidden">
               {image ? (
                 <AvatarImage
                   src={image}
@@ -143,7 +212,7 @@ const Profile = () => {
                 />
               ) : (
                 <div
-                  className={`uppercase h-32 w-32 md:w-48 md:h-48  text-5xl bg-[#712c4a57] text-[#ff006e] border-[1px] border-[#ff006faa] flex items-center justify-center rounded-full`}
+                  className={`uppercase h-32 w-32 md:w-48 md:h-48 text-5xl bg-[#712c4a57] text-[#ff006e] border-[1px] border-[#ff006faa] flex items-center justify-center rounded-full`}
                 >
                   {firstName
                     ? firstName.split("").shift()
@@ -151,7 +220,7 @@ const Profile = () => {
                 </div>
               )}
             </Avatar>
-            {hovered && (
+            {hovered && !isLoading && (
               <div
                 className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full cursor-pointer"
                 onClick={image ? handleDeleteImage : handleFileInputClick}
@@ -163,12 +232,17 @@ const Profile = () => {
                 )}
               </div>
             )}
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-full">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+              </div>
+            )}
             <input
               type="file"
               ref={fileInputRef}
               className="hidden"
               onChange={handleImageChange}
-              accept=".png, .jpg, .jpeg, .svg, .webp"
+              accept="image/jpeg, image/png, image/jpg, image/svg+xml, image/webp"
               name="profile-image"
             />
           </div>
@@ -177,7 +251,7 @@ const Profile = () => {
               <Input
                 placeholder="Email"
                 type="email"
-                className="rounded-lg  p-6 bg-[#2c2e3b] border-none"
+                className="rounded-lg p-6 bg-[#2c2e3b] border-none"
                 disabled
                 value={userInfo.email}
               />
@@ -219,8 +293,9 @@ const Profile = () => {
           <Button
             className="h-16 w-full bg-purple-700 hover:bg-purple-900 transition-all duration-300"
             onClick={saveChanges}
+            disabled={isLoading}
           >
-            Save Changes
+            {isLoading ? "Processing..." : "Save Changes"}
           </Button>
         </div>
       </div>
