@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import apiClient from "@/lib/api-client";
+import axios from "axios";
 import Cookies from "js-cookie";
 import Logo from "../../assets/image.png";
 import Background from "../../assets/side1.jpg";
@@ -33,10 +33,11 @@ const AdminUserForm = () => {
     try {
       const token = Cookies.get("adminToken");
 
-      await apiClient.post("/api/auth/admin/register", formData, {
+      await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/admin/register`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        withCredentials: true,
       });
 
       toast.success("User registered successfully!");
@@ -57,7 +58,6 @@ const AdminUserForm = () => {
         navigate("/user/home");
       }
     } catch (error) {
-      console.error("Registration error:", error);
       toast.error(error?.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
