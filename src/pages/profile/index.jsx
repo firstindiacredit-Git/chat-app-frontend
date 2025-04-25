@@ -33,7 +33,7 @@ const Profile = () => {
       setSelectedColor(userInfo.color);
     }
     if (userInfo.image) {
-      setImage(`${HOST}/${userInfo.image}`);
+      setImage(userInfo.image.startsWith('http') ? userInfo.image : `${HOST}/${userInfo.image}`);
     }
   }, [userInfo]);
 
@@ -68,6 +68,7 @@ const Profile = () => {
         }
       } catch (error) {
         console.log(error);
+        toast.error("Failed to update profile. Please try again.");
       }
     }
   };
@@ -75,35 +76,56 @@ const Profile = () => {
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const formData = new FormData();
-      formData.append("profile-image", file);
-      const response = await apiClient.post(ADD_PROFILE_IMAGE_ROUTE, formData, {
-        withCredentials: true,
-      });
-      if (response.status === 200 && response.data.image) {
-        setUserInfo({ ...userInfo, image: response.data.image });
-        toast.success("Image updated successfully.");
+      try {
+        const formData = new FormData();
+        formData.append("profile-image", file);
+        
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImage(reader.result);
+        };
+        reader.readAsDataURL(file);
+        
+        const response = await apiClient.post(ADD_PROFILE_IMAGE_ROUTE, formData, {
+          withCredentials: true,
+        });
+        
+        if (response.status === 200 && response.data.image) {
+          setUserInfo({ ...userInfo, image: response.data.image });
+          toast.success("Image updated successfully.");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        toast.error("Failed to upload image. Please try again.");
+        if (userInfo.image) {
+          setImage(userInfo.image.startsWith('http') ? userInfo.image : `${HOST}/${userInfo.image}`);
+        } else {
+          setImage(null);
+        }
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(file);
     }
   };
 
   const handleDeleteImage = async () => {
     try {
+      const previousImage = image;
+      setImage(null);
+      
       const response = await apiClient.delete(REMOVE_PROFILE_IMAGE_ROUTE, {
         withCredentials: true,
       });
+      
       if (response.status === 200) {
         setUserInfo({ ...userInfo, image: null });
         toast.success("Image Removed Successfully.");
-        setImage(undefined);
       }
     } catch (error) {
-      console.log({ error });
+      console.error("Error removing image:", error);
+      toast.error("Failed to remove image. Please try again.");
+      
+      if (userInfo.image) {
+        setImage(userInfo.image.startsWith('http') ? userInfo.image : `${HOST}/${userInfo.image}`);
+      }
     }
   };
 
@@ -165,11 +187,10 @@ const Profile = () => {
             )}
             <input
               type="file"
+              accept="image/*"
               ref={fileInputRef}
-              className="hidden"
               onChange={handleImageChange}
-              accept=".png, .jpg, .jpeg, .svg, .webp"
-              name="profile-image"
+              style={{ display: "none" }}
             />
           </div>
           <div className="flex min-w-32 md:min-w-64 flex-col gap-5 text-white items-center justify-center">

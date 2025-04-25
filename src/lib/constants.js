@@ -1,7 +1,15 @@
-export const HOST = import.meta.env.VITE_SERVER_URL;
-export const SOCKET_HOST = import.meta.env.VITE_SERVER_URL;
+// Get server URL from environment or use a fallback
+const serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
 
-export const AUTH_ROUTES = "api/auth";
+// Normalize URL format (ensure it doesn't end with a slash)
+export const HOST = serverUrl.endsWith('/') 
+  ? serverUrl.slice(0, -1) 
+  : serverUrl;
+
+export const SOCKET_HOST = HOST;
+
+// API Routes
+export const AUTH_ROUTES = "/api/auth";
 export const LOGIN_ROUTE = `${AUTH_ROUTES}/login`;
 export const SIGNUP_ROUTE = `${AUTH_ROUTES}/signup`;
 export const GET_USERINFO_ROUTE = `${AUTH_ROUTES}/userinfo`;
