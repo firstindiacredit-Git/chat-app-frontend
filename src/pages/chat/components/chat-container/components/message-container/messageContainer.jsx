@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { IoMdArrowRoundDown } from "react-icons/io";
 import { IoCloseSharp } from "react-icons/io5";
 import { MdFolderZip } from "react-icons/md";
+import backgroundImage from "@/assets/background.jpg";
 
 const MessageContainer = () => {
   const [showImage, setShowImage] = useState(false);
@@ -101,10 +102,11 @@ const MessageContainer = () => {
 
       return (
         <div key={index} className="w-full ">
+         
           {showDate && (
-            <div className="text-center  w-full  text-gray-400 my-2 ">
-              <hr className="boder-1 border-zinc-800" />
-              <div className="-translate-y-3 px-4w bg-black w-fit m-auto">
+            <div className="text-center w-full text-gray-200 my-4">
+              <hr className="border-1 border-zinc-800" />
+              <div className="-translate-y-3 px-4 py-1 bg-[#000000] w-fit m-auto rounded-full border border-zinc-700">
                 {moment(message.timestamp).format("LL")}
               </div>
             </div>
@@ -129,7 +131,13 @@ const MessageContainer = () => {
               message.sender !== selectedChatData._id
                 ? "bg-[#005C4B] text-white border-[#005C4B]"
                 : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block px-3 py-2 text-left rounded-xl my-1 max-w-[50%] break-words`}
+            } border inline-block px-3 py-2 text-left my-1 max-w-[50%] break-words`}
+            style={{
+              borderRadius:
+                message.sender !== selectedChatData._id
+                  ? "12px 12px 0px 12px"
+                  : "12px 12px 12px 0px"
+            }}
           >
             {message.content}
           </div>
@@ -140,7 +148,13 @@ const MessageContainer = () => {
               message.sender !== selectedChatData._id
                 ? "bg-[#005C4B] text-white border-[#005C4B]"
                 : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block  p-1 rounded-2xl my-1 max-w-[50%] break-words`}
+            } border inline-block p-1 my-1 max-w-[50%] break-words`}
+            style={{
+              borderRadius:
+                message.sender !== selectedChatData._id
+                  ? "12px 12px 0px 12px"
+                  : "12px 12px 12px 0px"
+            }}
           >
             {checkIfImage(message.fileUrl) ? (
               <div
@@ -155,7 +169,7 @@ const MessageContainer = () => {
                   alt=""
                   height={300}
                   width={300}
-                  style={{ borderRadius: "13px" }}
+                  style={{ borderRadius: "8px" }}
                 />
               </div>
             ) : (
@@ -191,22 +205,35 @@ const MessageContainer = () => {
       >
         {message.messageType === MESSAGE_TYPES.TEXT && (
           <div
-            className={`${
+          className={`${
+            message.sender._id === userInfo.id
+              ? "bg-[#005C4B] border-[#005C4B]"
+              : "bg-[#202C33] border-[#202C33]"
+          } text-white border inline-block px-2 py-1 -my-1 max-w-[50%] break-words ml-9`}
+          style={{
+            borderRadius:
               message.sender._id === userInfo.id
-                ? "bg-[#005C4B] text-white border-[#005C4B]"
-                : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block  px-2 py-1 rounded-xl -my-1 max-w-[50%] break-words ml-9`}
+                ? "12px 12px 0px 12px"
+                : "12px 12px 12px 0px"
+          }}
           >
             {message.content}
           </div>
         )}
         {message.messageType === MESSAGE_TYPES.FILE && (
           <div
-            className={`${
+          className={`${
+            message.sender._id === userInfo.id
+              ? "bg-[#005C4B] border-[#005C4B]"
+              : "bg-[#202C33] border-[#202C33]"
+          } text-white border inline-block px-2 py-1 -my-1 max-w-[50%] break-words ml-9`}
+          style={{
+            borderRadius:
               message.sender._id === userInfo.id
-                 ? "bg-[#005C4B] text-white border-[#005C4B]"
-                : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block  px-2 py-1 rounded-xl -my-1 max-w-[50%] break-words ml-9`}
+                ? "12px 12px 0px 12px"
+                : "12px 12px 12px 0px"
+          }}
+          
           >
             {checkIfImage(message.fileUrl) ? (
               <div
@@ -273,9 +300,21 @@ const MessageContainer = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto scrollbar-hidden p-4 px-8 md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full">
-      {renderMessages()}
-      <div ref={messageEndRef} />
+    <div 
+      className="flex-1 overflow-y-auto  scrollbar-hidden  md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full relative"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+      }}
+    >
+      <div className="p-4 px-8 bg-black/20 ">
+      <div className="relative  z-10">
+        {renderMessages()}
+        <div ref={messageEndRef} />
+      </div>
+      </div>
       {showImage && (
         <div className="fixed z-[1000] top-0 left-0 h-[100vh] w-[100vw] flex items-center justify-center backdrop-blur-lg flex-col">
           <div>

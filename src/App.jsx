@@ -61,6 +61,7 @@ function App() {
   }
 
   return (
+  
     <Router>
       <Routes>
         <Route
@@ -92,6 +93,7 @@ function App() {
         <Route path="*" element={<Navigate to="/auth" />} />
       </Routes>
     </Router>
+  
   );
 }
 

@@ -74,7 +74,7 @@ const ChatHeader = () => {
   return (
     <div className={`
       h-[10vh] border-b-2 border-black flex items-center justify-between 
-      ${isMobileView ? 'px-4' : 'px-20'} bg-[#111b21] relative
+      ${isMobileView ? 'px-4' : 'px-20'} bg-[#0A0A0A] relative
     `}>
       <div className="flex gap-3 items-center">
         {isMobileView && (

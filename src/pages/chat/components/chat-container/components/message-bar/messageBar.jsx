@@ -146,7 +146,7 @@ const MessageBar = () => {
 
   return (
     <div className={`
-      min-h-[8vh] bg-[#111b21] flex justify-center items-center 
+      min-h-[8vh] bg-[#0A0A0A] flex justify-center items-center 
       ${isSmallMobile ? 'px-2' : isMobileView ? 'px-3' : 'px-8'} 
       ${isSmallMobile ? 'gap-2' : 'gap-3 md:gap-6'} my-2 md:my-5
     `}>

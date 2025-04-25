@@ -15,6 +15,9 @@ import CreateChannel from "./components/create-channel/create-channel";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, UserPlus, MessageSquarePlus, Users } from "lucide-react";
 
+// Define custom button style for sidebar buttons
+const sidebarButtonStyle = "w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] hover:text-[#e9edef] border-none h-10 flex gap-2 items-center justify-center rounded-md transition-colors duration-300";
+
 const ContactsContainer = () => {
   const {
     setDirectMessagesContacts,
@@ -120,7 +123,7 @@ const ContactsContainer = () => {
       ${isMobileView ? 'fixed top-0 left-0 h-full z-20' : 'relative'} 
       ${isMobileView && !sidebarVisible ? 'hidden' : 'block'} 
       md:w-[35vw] lg:w-[30vw] xl:w-[20vw] w-full 
-      max-h-screen overflow-hidden flex flex-col bg-[#111b21] border-r border-black
+      max-h-screen overflow-hidden flex flex-col bg-[#0A0A0A] border-r border-black
       transition-all duration-300
     `}>
       {/* Header */}
@@ -165,7 +168,7 @@ const ContactsContainer = () => {
           {activeSection === 'directMessages' && (
             <div className="mt-2 w-full">
               <NewDM 
-                buttonClass="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-10 flex gap-2 items-center justify-center rounded-md"
+                buttonClass={sidebarButtonStyle}
                 buttonText={
                   <>
                     <MessageSquarePlus size={16} />
@@ -178,7 +181,7 @@ const ContactsContainer = () => {
           {activeSection === 'groups' && (
             <div className="mt-2 w-full">
               <CreateChannel 
-                buttonClass="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-10 flex gap-2 items-center justify-center rounded-md"
+                buttonClass={sidebarButtonStyle}
                 buttonText={
                   <>
                     <Users size={16} />
@@ -210,7 +213,7 @@ const ContactsContainer = () => {
             <Button 
               onClick={openRegistrationForm} 
               variant="outline"
-              className="w-full bg-[#2a3942] text-[#e9edef] hover:bg-[#374b57] border-none h-10 flex gap-2 items-center justify-center rounded-md"
+              className={sidebarButtonStyle}
             >
               <UserPlus size={16} />
               <span>Register User</span>
