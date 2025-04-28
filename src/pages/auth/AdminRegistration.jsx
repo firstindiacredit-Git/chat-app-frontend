@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import Logo from "../../assets/image.png";
 import Background from "../../assets/side1.jpg";
 import Victory from "../../assets/victory.svg";
-import { Mail, Lock, User, UserCog } from "lucide-react";
+import { Mail, Lock, User, UserCog, Eye, EyeOff } from "lucide-react";
 
 const AdminUserForm = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +20,7 @@ const AdminUserForm = () => {
     role: "user",
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -103,13 +104,21 @@ const AdminUserForm = () => {
                 <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
                 <Input
                   placeholder="Password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
                   required
-                  className="p-2 pl-12 rounded-xl border border-gray-600 bg-gray-800/50 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent h-10 shadow-md"
+                  className="p-2 pl-12 pr-12 rounded-xl border border-gray-600 bg-gray-800/50 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent h-10 shadow-md"
                 />
+                <button
+                  type="button"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
               
               <div className="relative">
@@ -144,7 +153,7 @@ const AdminUserForm = () => {
                   name="role"
                   value={formData.role}
                   onChange={handleInputChange}
-                  className="w-full p-2 pl-12 rounded-xl border border-gray-600 bg-gray-800/50 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent h-10 shadow-md"
+                  className="w-full p-2 pl-12 rounded-xl border border-gray-600 bg-gray-800/90 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent h-10 shadow-md"
                 >
                   <option value="user">User</option>
                   <option value="admin">Admin</option>

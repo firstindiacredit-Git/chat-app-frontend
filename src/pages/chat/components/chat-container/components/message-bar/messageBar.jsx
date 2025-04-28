@@ -13,7 +13,6 @@ import "react-toastify/dist/ReactToastify.css";
 const MessageBar = () => {
   const emojiRef = useRef();
   const fileInputRef = useRef();
-  const textareaRef = useRef(null);
   const {
     selectedChatData,
     userInfo,
@@ -39,13 +38,6 @@ const MessageBar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Adjust textarea height when component mounts
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "40px";
-    }
-  }, []);
-
   useEffect(() => {
     function handleClickOutside(event) {
       if (emojiRef.current && !emojiRef.current.contains(event.target)) {
@@ -60,12 +52,6 @@ const MessageBar = () => {
 
   const handleAddEmoji = (emoji) => {
     setMessage((msg) => msg + emoji.emoji);
-    if (textareaRef.current) {
-      setTimeout(() => {
-        textareaRef.current.style.height = "auto";
-        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-      }, 0);
-    }
   };
 
   const handleMessageChange = (event) => {
@@ -106,10 +92,6 @@ const MessageBar = () => {
       });
     }
     setMessage("");
-    // Reset textarea height
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "40px";
-    }
   };
 
   const handleAttachmentChange = async (event) => {
@@ -164,50 +146,43 @@ const MessageBar = () => {
 
   return (
     <div className={`
-      fixed bottom-0 left-0 right-0 md:static
-      bg-[#0A0A0A] flex justify-center items-center 
-      ${isSmallMobile ? 'px-1' : isMobileView ? 'px-2' : 'px-4 lg:px-8'} 
-      ${isSmallMobile ? 'gap-1' : 'gap-2 md:gap-4'} 
-      py-2 md:py-3 lg:py-4
-      border-t border-[#1a1a1a]
-      z-10
+      min-h-[8vh] bg-[#0A0A0A] flex justify-center items-center 
+      ${isSmallMobile ? 'px-2' : isMobileView ? 'px-3' : 'px-8'} 
+      ${isSmallMobile ? 'gap-2' : 'gap-3 md:gap-6'} my-2 md:my-5
     `}>
-      <div className="flex-1 flex bg-[#2a2b33] rounded-md items-center gap-1 md:gap-3 pr-1 md:pr-3">
+      <div className="flex-1 flex bg-[#2a2b33] h-full rounded-md items-center gap-2 md:gap-5 pr-2 md:pr-5">
         <textarea
-          ref={textareaRef}
           style={{
-            resize: "none",
-            minHeight: "40px",
-            borderRight: "1px solid #2f303b",
-            maxHeight: isSmallMobile ? "80px" : isMobileView ? "120px" : "200px",
-            scrollbarWidth: "none",
-            WebkitOverflowScrolling: "touch",
-            msOverflowStyle: "none",
+            resize: "none", // Disable resizing
+            minHeight: "40px", // Minimum height
+            borderRight: "1px solid #2f303b", // Border color
+            maxHeight: "200px", // Maximum height
+            scrollbarWidth: "none", // For Firefox
+            WebkitOverflowScrolling: "touch", // For smooth scrolling on iOS
           }}
-          cols={isSmallMobile ? 20 : 30}
-          rows={1}
-          className={`flex-1 ${isSmallMobile ? 'p-2 text-sm' : isMobileView ? 'p-2 text-base' : 'p-3 md:p-4'} bg-transparent rounded-md focus:border-none focus:outline-none text-white`}
+          type="text"
+          cols={30}
+          rows={1} // Initially, set to 1 row
+          className={`flex-1 ${isSmallMobile ? 'p-2' : 'p-3 md:p-5'} bg-transparent rounded-md focus:border-none focus:outline-none text-sm md:text-base`}
           placeholder="Enter message"
           value={message}
           onChange={handleMessageChange}
           onInput={(e) => {
-            e.target.style.height = "auto";
-            const newHeight = Math.min(e.target.scrollHeight, isSmallMobile ? 80 : isMobileView ? 120 : 200);
-            e.target.style.height = `${newHeight}px`;
+            e.target.style.height = "auto"; // Reset the height
+            e.target.style.height = `${e.target.scrollHeight}px`; // Adjust height based on content
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
+              e.preventDefault(); // Prevents newline in the input field
               handleSendMessage();
             }
           }}
         ></textarea>
         <button
-          className="text-neutral-300 focus:border-none focus:outline-none hover:text-white transition-all duration-300 p-1 md:p-2"
+          className="text-neutral-300 focus:border-none focus:outline-none focus:text-white transition-all duration-300 p-1 md:p-2"
           onClick={handleAttachmentClick}
-          aria-label="Attach file"
         >
-          <GrAttachment className={`${isSmallMobile ? 'text-base' : isMobileView ? 'text-lg' : 'text-xl'}`} />
+          <GrAttachment className={`${isSmallMobile ? 'text-lg' : 'text-xl md:text-2xl'}`} />
         </button>
         <input
           type="file"
@@ -217,22 +192,12 @@ const MessageBar = () => {
         />
         <div className="relative">
           <button
-            className="text-neutral-300 focus:border-none focus:outline-none hover:text-white transition-all duration-300 p-1 md:p-2"
+            className="text-neutral-300 focus:border-none focus:outline-none focus:text-white transition-all duration-300 p-1 md:p-2"
             onClick={() => setEmojiPickerOpen(true)}
-            aria-label="Open emoji picker"
           >
-            <RiEmojiStickerLine className={`${isSmallMobile ? 'text-base' : isMobileView ? 'text-lg' : 'text-xl'}`} />
+            <RiEmojiStickerLine className={`${isSmallMobile ? 'text-lg' : 'text-xl md:text-2xl'}`} />
           </button>
-          <div 
-            className={`absolute ${
-              isSmallMobile 
-                ? 'bottom-10 right-0 transform scale-[0.65] origin-bottom-right' 
-                : isMobileView 
-                  ? 'bottom-12 right-0 transform scale-75 origin-bottom-right' 
-                  : 'bottom-16 right-0'
-            }`} 
-            ref={emojiRef}
-          >
+          <div className={`absolute ${isMobileView ? 'bottom-12 right-0 transform scale-75 origin-bottom-right' : 'bottom-16 right-0'}`} ref={emojiRef}>
             {emojiPickerOpen && (
               <EmojiPicker
                 theme="dark"
@@ -248,14 +213,13 @@ const MessageBar = () => {
       </div>
       <button
         className={`
-          bg-purple-700 rounded-md flex items-center justify-center 
-          ${isSmallMobile ? 'p-2' : isMobileView ? 'p-3' : 'p-3 md:p-4'} 
-          focus:border-none focus:outline-none hover:bg-purple-800 transition-all duration-300
+          bg-[#2a2b33] rounded-md flex items-center justify-center 
+          ${isSmallMobile ? 'p-3' : 'p-4 md:p-5'} 
+          gap-2 focus:border-none focus:outline-none hover:bg-[#741bda] focus:bg-[#741bda] transition-all duration-300
         `}
         onClick={handleSendMessage}
-        aria-label="Send message"
       >
-        <IoSend className={`${isSmallMobile ? 'text-base' : isMobileView ? 'text-lg' : 'text-xl'} text-white`} />
+        <IoSend className={`${isSmallMobile ? 'text-lg' : 'text-xl md:text-2xl'}`} />
       </button>
       <ToastContainer />
     </div>

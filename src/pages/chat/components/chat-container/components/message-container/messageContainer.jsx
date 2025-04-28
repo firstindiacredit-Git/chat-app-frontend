@@ -18,8 +18,6 @@ import backgroundImage from "@/assets/background.jpg";
 const MessageContainer = () => {
   const [showImage, setShowImage] = useState(false);
   const [imageURL, setImageURL] = useState(null);
-  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
-  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth < 380);
   const {
     selectedChatData,
     setSelectedChatMessages,
@@ -30,19 +28,6 @@ const MessageContainer = () => {
     setIsDownloading,
   } = useAppStore();
   const messageEndRef = useRef(null);
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobileView(window.innerWidth < 768);
-      setIsSmallMobile(window.innerWidth < 380);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -116,11 +101,12 @@ const MessageContainer = () => {
       lastDate = messageDate;
 
       return (
-        <div key={index} className="w-full">
+        <div key={index} className="w-full ">
+         
           {showDate && (
-            <div className="text-center w-full text-gray-200 my-3 md:my-4">
+            <div className="text-center w-full text-gray-200 my-4">
               <hr className="border-1 border-zinc-800" />
-              <div className="-translate-y-3 px-3 py-1 bg-[#000000] w-fit m-auto rounded-full border border-zinc-700 text-xs md:text-sm">
+              <div className="-translate-y-3 px-4 py-1 bg-[#000000] w-fit m-auto rounded-full border border-zinc-700">
                 {moment(message.timestamp).format("LL")}
               </div>
             </div>
@@ -135,7 +121,7 @@ const MessageContainer = () => {
   const renderPersonalMessages = (message) => {
     return (
       <div
-        className={`message px-2 md:px-4 ${
+        className={`message  ${
           message.sender === selectedChatData._id ? "text-left" : "text-right"
         }`}
       >
@@ -145,7 +131,7 @@ const MessageContainer = () => {
               message.sender !== selectedChatData._id
                 ? "bg-[#005C4B] text-white border-[#005C4B]"
                 : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block px-3 py-2 text-left my-1 ${isMobileView ? 'max-w-[80%]' : 'max-w-[70%] lg:max-w-[60%] xl:max-w-[50%]'} break-words text-sm md:text-base`}
+            } border inline-block px-3 py-2 text-left my-1 max-w-[50%] break-words`}
             style={{
               borderRadius:
                 message.sender !== selectedChatData._id
@@ -162,7 +148,7 @@ const MessageContainer = () => {
               message.sender !== selectedChatData._id
                 ? "bg-[#005C4B] text-white border-[#005C4B]"
                 : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block p-1 my-1 ${isMobileView ? 'max-w-[85%]' : 'max-w-[70%] lg:max-w-[60%] xl:max-w-[50%]'} break-words`}
+            } border inline-block p-1 my-1 max-w-[50%] break-words`}
             style={{
               borderRadius:
                 message.sender !== selectedChatData._id
@@ -180,25 +166,20 @@ const MessageContainer = () => {
               >
                 <img
                   src={`${HOST}/${message.fileUrl}`}
-                  alt="Image attachment"
-                  className="rounded-lg w-full max-w-full h-auto object-contain"
-                  loading="lazy"
+                  alt=""
+                  height={300}
+                  width={300}
+                  style={{ borderRadius: "8px" }}
                 />
               </div>
             ) : (
-              <div className={`flex ${isSmallMobile ? 'flex-col p-2 gap-2' : isMobileView ? 'items-center p-2 gap-3' : 'items-center justify-between p-3 gap-4'}`}>
-                <div className="flex items-center gap-2">
-                  <span className={`text-white/80 ${isSmallMobile ? 'text-xl p-2' : 'text-2xl p-3'} bg-black/20 rounded-full`}>
-                    <MdFolderZip />
-                  </span>
-                  <span className={`${isSmallMobile ? 'text-xs' : 'text-sm'} break-all`}>
-                    {message.fileUrl.split("/").pop().length > 20 
-                      ? `${message.fileUrl.split("/").pop().substring(0, 20)}...` 
-                      : message.fileUrl.split("/").pop()}
-                  </span>
-                </div>
+              <div className="flex items-center justify-center gap-5">
+                <span className="text-white/80 text-3xl bg-black/20 rounded-full p-3">
+                  <MdFolderZip />
+                </span>
+                <span>{message.fileUrl.split("/").pop()}</span>
                 <span
-                  className="bg-black/20 p-2 text-xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300 shrink-0"
+                  className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
                   onClick={() => downloadFile(message.fileUrl)}
                 >
                   <IoMdArrowRoundDown />
@@ -208,7 +189,7 @@ const MessageContainer = () => {
           </div>
         )}
 
-        <div className="text-xs text-gray-500 mr-1 ml-1">
+        <div className="text-xs text-gray-500">
           {moment(message.timestamp).format("LT")}
         </div>
       </div>
@@ -218,7 +199,7 @@ const MessageContainer = () => {
   const renderChannelMessages = (message) => {
     return (
       <div
-        className={`mt-4 px-2 md:px-4 ${
+        className={`mt-4  ${
           message.sender._id !== userInfo.id ? "text-left" : "text-right"
         }`}
       >
@@ -228,7 +209,7 @@ const MessageContainer = () => {
             message.sender._id === userInfo.id
               ? "bg-[#005C4B] border-[#005C4B]"
               : "bg-[#202C33] border-[#202C33]"
-          } text-white border inline-block px-2 py-1 -my-1 ${isMobileView ? 'max-w-[80%]' : 'max-w-[70%] lg:max-w-[60%] xl:max-w-[50%]'} break-words ${message.sender._id !== userInfo.id ? 'ml-9' : ''} text-sm md:text-base`}
+          } text-white border inline-block px-2 py-1 -my-1 max-w-[50%] break-words ml-9`}
           style={{
             borderRadius:
               message.sender._id === userInfo.id
@@ -245,13 +226,14 @@ const MessageContainer = () => {
             message.sender._id === userInfo.id
               ? "bg-[#005C4B] border-[#005C4B]"
               : "bg-[#202C33] border-[#202C33]"
-          } text-white border inline-block px-2 py-1 -my-1 ${isMobileView ? 'max-w-[85%]' : 'max-w-[70%] lg:max-w-[60%] xl:max-w-[50%]'} break-words ${message.sender._id !== userInfo.id ? 'ml-9' : ''}`}
+          } text-white border inline-block px-2 py-1 -my-1 max-w-[50%] break-words ml-9`}
           style={{
             borderRadius:
               message.sender._id === userInfo.id
                 ? "12px 12px 0px 12px"
                 : "12px 12px 12px 0px"
           }}
+          
           >
             {checkIfImage(message.fileUrl) ? (
               <div
@@ -263,25 +245,19 @@ const MessageContainer = () => {
               >
                 <img
                   src={`${HOST}/${message.fileUrl}`}
-                  alt="Image attachment"
-                  className="rounded-lg w-full max-w-full h-auto object-contain"
-                  loading="lazy"
+                  alt=""
+                  height={300}
+                  width={300}
                 />
               </div>
             ) : (
-              <div className={`flex ${isSmallMobile ? 'flex-col p-2 gap-2' : isMobileView ? 'items-center p-2 gap-3' : 'items-center justify-between p-3 gap-4'}`}>
-                <div className="flex items-center gap-2">
-                  <span className={`text-white/80 ${isSmallMobile ? 'text-xl p-2' : 'text-2xl p-3'} bg-black/20 rounded-full`}>
-                    <MdFolderZip />
-                  </span>
-                  <span className={`${isSmallMobile ? 'text-xs' : 'text-sm'} break-all`}>
-                    {message.fileUrl.split("/").pop().length > 20 
-                      ? `${message.fileUrl.split("/").pop().substring(0, 20)}...` 
-                      : message.fileUrl.split("/").pop()}
-                  </span>
-                </div>
+              <div className="flex items-center justify-center gap-5">
+                <span className="text-white/80 text-3xl bg-black/20 rounded-full p-3">
+                  <MdFolderZip />
+                </span>
+                <span>{message.fileUrl.split("/").pop()}</span>
                 <span
-                  className="bg-black/20 p-2 text-xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300 shrink-0"
+                  className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
                   onClick={() => downloadFile(message.fileUrl)}
                 >
                   <IoMdArrowRoundDown />
@@ -325,39 +301,38 @@ const MessageContainer = () => {
 
   return (
     <div 
-      ref={containerRef}
-      className="h-full overflow-y-auto scrollbar-hidden w-full relative"
+      className="flex-1 overflow-y-auto  scrollbar-hidden  md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full relative"
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none',
       }}
     >
-      <div className="p-2 md:p-4 bg-black/20">
-        <div className="relative z-10 pb-4">
-          {renderMessages()}
-          <div ref={messageEndRef} />
-        </div>
+      <div className="p-4 px-8 bg-black/20 ">
+      <div className="relative  z-10">
+        {renderMessages()}
+        <div ref={messageEndRef} />
+      </div>
       </div>
       {showImage && (
-        <div className="fixed z-[1000] top-0 left-0 h-screen w-screen flex items-center justify-center backdrop-blur-lg flex-col bg-black/60">
-          <img
-            src={`${HOST}/${imageURL}`}
-            className={`${isMobileView ? 'max-h-[80vh] max-w-[90vw]' : 'max-h-[85vh] max-w-[80vw]'} object-contain`}
-            alt="Full size"
-          />
-          <div className="flex gap-4 mt-4">
+        <div className="fixed z-[1000] top-0 left-0 h-[100vh] w-[100vw] flex items-center justify-center backdrop-blur-lg flex-col">
+          <div>
+            <img
+              src={`${HOST}/${imageURL}`}
+              className="h-[80vh] w-full bg-cover"
+              alt=""
+            />
+          </div>
+          <div className="flex gap-5 fixed top-0 mt-5">
             <button
-              className="bg-black/40 p-3 text-2xl rounded-full hover:bg-black/60 cursor-pointer transition-all duration-300 text-white"
+              className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
               onClick={() => downloadFile(imageURL)}
             >
               <IoMdArrowRoundDown />
             </button>
             <button
-              className="bg-black/40 p-3 text-2xl rounded-full hover:bg-black/60 cursor-pointer transition-all duration-300 text-white"
+              className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
               onClick={() => {
                 setShowImage(false);
                 setImageURL(null);
