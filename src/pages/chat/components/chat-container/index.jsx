@@ -9,12 +9,10 @@ import { useAppStore } from "@/store";
 const ChatContainer = () => {
   const { selectedChatType } = useAppStore();
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
-  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth < 380);
   
   useEffect(() => {
     const handleResize = () => {
       setIsMobileView(window.innerWidth < 768);
-      setIsSmallMobile(window.innerWidth < 380);
     };
     
     window.addEventListener('resize', handleResize);
@@ -25,18 +23,16 @@ const ChatContainer = () => {
   
   return (
     <div className={`
-      ${isMobileView ? 'fixed top-0 left-0 h-screen w-screen z-10' : 'md:static md:flex-1'}
-      flex flex-col relative
-      bg-[#0a0a0a]
-      overflow-hidden
+      ${isMobileView ? 'fixed top-0 left-0 h-[100vh] w-[100vw] z-10' : 'md:static md:flex-1'}
+      flex flex-col 
     `}>
-      <div className="w-full flex-shrink-0 z-20">
-        <ChatHeader />
+      <div></div>
+      <img src="./assets/background.png" alt="" />
+      <ChatHeader />
+      <MessageContainer />
+      <div className="shadow border-t border-black bg-[#0A0A0A]">
+        <MessageBar />
       </div>
-      <div className={`flex-1 overflow-y-auto ${isSmallMobile ? 'pb-14' : isMobileView ? 'pb-16' : 'pb-20'}`}>
-        <MessageContainer />
-      </div>
-      <MessageBar />
     </div>
   );
 };
