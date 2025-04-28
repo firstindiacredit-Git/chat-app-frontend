@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { FaPlus } from "react-icons/fa";
+import { X } from "lucide-react";
 //eslint-disable-next-line
 import { useEffect, useState } from "react";
 import { useAppStore } from "@/store";
@@ -131,6 +132,15 @@ const NewDM = ({ buttonClass, buttonText }) => {
               scrollbarColor: 'var(--scrollbar-thumb) var(--scrollbar-track)',
             }}
           >
+            <div className="flex justify-end mb-2">
+              <button
+                type="button"
+                className="rounded-full p-1.5 bg-[#2c2e3b] hover:bg-purple-700 transition-all duration-300"
+                onClick={() => setOpenNewContactModal(false)}
+              >
+                <X className="h-4 w-4 text-white" />
+              </button>
+            </div>
             <div className="flex flex-col gap-5">
               {searchedContacts.map((contact) => (
                 <div

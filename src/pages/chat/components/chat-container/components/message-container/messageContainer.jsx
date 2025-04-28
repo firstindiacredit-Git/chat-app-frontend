@@ -18,6 +18,8 @@ import backgroundImage from "@/assets/background.jpg";
 const MessageContainer = () => {
   const [showImage, setShowImage] = useState(false);
   const [imageURL, setImageURL] = useState(null);
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth < 380);
   const {
     selectedChatData,
     setSelectedChatMessages,
@@ -28,6 +30,18 @@ const MessageContainer = () => {
     setIsDownloading,
   } = useAppStore();
   const messageEndRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+      setIsSmallMobile(window.innerWidth < 380);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -121,7 +135,7 @@ const MessageContainer = () => {
   const renderPersonalMessages = (message) => {
     return (
       <div
-        className={`message  ${
+        className={`message px-2 md:px-4 ${
           message.sender === selectedChatData._id ? "text-left" : "text-right"
         }`}
       >
@@ -131,7 +145,7 @@ const MessageContainer = () => {
               message.sender !== selectedChatData._id
                 ? "bg-[#005C4B] text-white border-[#005C4B]"
                 : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block px-3 py-2 text-left my-1 max-w-[50%] break-words`}
+            } border inline-block px-3 py-2 text-left my-1 ${isMobileView ? 'max-w-[80%]' : 'max-w-[50%]'} break-words text-sm md:text-base`}
             style={{
               borderRadius:
                 message.sender !== selectedChatData._id
@@ -148,7 +162,7 @@ const MessageContainer = () => {
               message.sender !== selectedChatData._id
                 ? "bg-[#005C4B] text-white border-[#005C4B]"
                 : "bg-[#202C33] text-white border-[#202C33]"
-            } border inline-block p-1 my-1 max-w-[50%] break-words`}
+            } border inline-block p-1 my-1 ${isMobileView ? 'max-w-[80%]' : 'max-w-[50%]'} break-words`}
             style={{
               borderRadius:
                 message.sender !== selectedChatData._id
@@ -167,17 +181,16 @@ const MessageContainer = () => {
                 <img
                   src={`${HOST}/${message.fileUrl}`}
                   alt=""
-                  height={300}
-                  width={300}
+                  className="rounded-lg w-full max-w-[300px] h-auto"
                   style={{ borderRadius: "8px" }}
                 />
               </div>
             ) : (
-              <div className="flex items-center justify-center gap-5">
+              <div className={`flex items-center justify-center ${isSmallMobile ? 'flex-col gap-2 p-2' : 'flex-row gap-5 p-3'}`}>
                 <span className="text-white/80 text-3xl bg-black/20 rounded-full p-3">
                   <MdFolderZip />
                 </span>
-                <span>{message.fileUrl.split("/").pop()}</span>
+                <span className="text-sm break-all">{message.fileUrl.split("/").pop()}</span>
                 <span
                   className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
                   onClick={() => downloadFile(message.fileUrl)}
@@ -199,7 +212,7 @@ const MessageContainer = () => {
   const renderChannelMessages = (message) => {
     return (
       <div
-        className={`mt-4  ${
+        className={`mt-4 px-2 md:px-4 ${
           message.sender._id !== userInfo.id ? "text-left" : "text-right"
         }`}
       >
@@ -209,7 +222,7 @@ const MessageContainer = () => {
             message.sender._id === userInfo.id
               ? "bg-[#005C4B] border-[#005C4B]"
               : "bg-[#202C33] border-[#202C33]"
-          } text-white border inline-block px-2 py-1 -my-1 max-w-[50%] break-words ml-9`}
+          } text-white border inline-block px-2 py-1 -my-1 ${isMobileView ? 'max-w-[80%]' : 'max-w-[50%]'} break-words ml-9 text-sm md:text-base`}
           style={{
             borderRadius:
               message.sender._id === userInfo.id
@@ -226,14 +239,13 @@ const MessageContainer = () => {
             message.sender._id === userInfo.id
               ? "bg-[#005C4B] border-[#005C4B]"
               : "bg-[#202C33] border-[#202C33]"
-          } text-white border inline-block px-2 py-1 -my-1 max-w-[50%] break-words ml-9`}
+          } text-white border inline-block px-2 py-1 -my-1 ${isMobileView ? 'max-w-[80%]' : 'max-w-[50%]'} break-words ml-9`}
           style={{
             borderRadius:
               message.sender._id === userInfo.id
                 ? "12px 12px 0px 12px"
                 : "12px 12px 12px 0px"
           }}
-          
           >
             {checkIfImage(message.fileUrl) ? (
               <div
@@ -246,16 +258,16 @@ const MessageContainer = () => {
                 <img
                   src={`${HOST}/${message.fileUrl}`}
                   alt=""
-                  height={300}
-                  width={300}
+                  className="rounded-lg w-full max-w-[300px] h-auto"
+                  style={{ borderRadius: "8px" }}
                 />
               </div>
             ) : (
-              <div className="flex items-center justify-center gap-5">
+              <div className={`flex items-center justify-center ${isSmallMobile ? 'flex-col gap-2 p-2' : 'flex-row gap-5 p-3'}`}>
                 <span className="text-white/80 text-3xl bg-black/20 rounded-full p-3">
                   <MdFolderZip />
                 </span>
-                <span>{message.fileUrl.split("/").pop()}</span>
+                <span className="text-sm break-all">{message.fileUrl.split("/").pop()}</span>
                 <span
                   className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
                   onClick={() => downloadFile(message.fileUrl)}

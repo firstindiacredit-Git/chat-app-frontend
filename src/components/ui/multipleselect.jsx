@@ -13,6 +13,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const CommandEmpty = forwardRef(({ className, ...props }, forwardedRef) => {
   const render = useCommandState((state) => state.filtered.count === 0);
@@ -248,176 +249,203 @@ const MultipleSelector = React.forwardRef(
         shouldFilter={
           commandProps?.shouldFilter !== undefined
             ? commandProps.shouldFilter
-            : !onSearch
-        } // When onSearch is provided, we don't want to filter the options. You can still override it.
+            : onSearch
+            ? false
+            : undefined
+        }
         filter={commandFilter()}
       >
         <div
           className={cn(
-            "min-h-10 rounded-md border border-input text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
-            {
-              "px-3 py-2": selected.length !== 0,
-              "cursor-text": !disabled && selected.length !== 0,
-            },
+            "group rounded-md border border-[#2c2e3b] bg-[#2c2e3b] px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
             className
           )}
-          onClick={() => {
-            if (disabled) return;
-            inputRef.current?.focus();
-          }}
         >
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-1">
             {selected.map((option) => {
               return (
                 <Badge
                   key={option.value}
                   className={cn(
-                    "data-[disabled]:bg-muted-foreground data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground bg-purple-500 p-2",
+                    "data-[disabled]:bg-muted-foreground data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground",
                     "data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground",
+                    "bg-purple-700 text-white hover:bg-purple-800",
                     badgeClassName
                   )}
+                  variant="secondary"
                   data-fixed={option.fixed}
-                  data-disabled={disabled || undefined}
+                  data-disabled={disabled}
                 >
                   {option.label}
-                  <button
-                    className={cn(
-                      "ml-1 rounded-full text-white outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                      (disabled || option.fixed) && "hidden"
-                    )}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleUnselect(option);
-                      }
-                    }}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                    onClick={() => handleUnselect(option)}
-                  >
-                    <X className="h-4 w-4 text-white hover:text-purple-500" />
-                  </button>
+                  {!option.fixed && !disabled && (
+                    <button
+                      type="button"
+                      className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleUnselect(option);
+                        }
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onClick={() => handleUnselect(option)}
+                    >
+                      <X className="h-3 w-3 text-white hover:text-gray-200" />
+                    </button>
+                  )}
                 </Badge>
               );
             })}
             {/* Avoid having the "Search" Icon */}
             <CommandPrimitive.Input
-              {...inputProps}
               ref={inputRef}
               value={inputValue}
               disabled={disabled}
+              onMouseDown={() => mouseOn.current = true}
+              onBlur={() => {
+                setOpen(false);
+                mouseOn.current = false;
+              }}
+              onFocus={() => {
+                setOpen(true);
+              }}
               onValueChange={(value) => {
                 setInputValue(value);
-                inputProps?.onValueChange?.(value);
               }}
-              onBlur={(event) => {
-                if (mouseOn.current === false) {
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
                   setOpen(false);
+                  e.stopPropagation();
                 }
-                inputProps?.onBlur?.(event);
+                if (
+                  e.key === "Enter" &&
+                  creatable &&
+                  inputValue.length > 0 &&
+                  selectables.findIndex((obj) =>
+                    Object.values(obj).some(
+                      (val) =>
+                        typeof val === "string" &&
+                        val.toLowerCase() === inputValue.toLowerCase()
+                    )
+                  ) === -1
+                ) {
+                  if (selected.length >= maxSelected) {
+                    onMaxSelected?.(selected.length);
+                    return;
+                  }
+                  const newOptions = [
+                    ...selected,
+                    { value: inputValue, label: inputValue },
+                  ];
+                  setSelected(newOptions);
+                  onChange?.(newOptions);
+                  setInputValue("");
+                  e.preventDefault();
+                }
               }}
-              onFocus={(event) => {
-                setOpen(true);
-                triggerSearchOnFocus && onSearch?.(debouncedSearchTerm);
-                inputProps?.onFocus?.(event);
-              }}
+              className={cn(
+                "ml-2 flex-1 bg-transparent outline-none text-white placeholder:text-gray-400",
+                inputProps?.className
+              )}
+              {...inputProps}
               placeholder={
                 hidePlaceholderWhenSelected && selected.length !== 0
                   ? ""
                   : placeholder
               }
-              className={cn(
-                "flex-1 bg-transparent outline-none placeholder:text-muted-foreground",
-                {
-                  "w-full": hidePlaceholderWhenSelected,
-                  "px-3 py-2": selected.length === 0,
-                  "ml-1": selected.length !== 0,
-                },
-                inputProps?.className
-              )}
             />
-            <button
-              type="button"
-              onClick={() => setSelected(selected.filter((s) => s.fixed))}
-              className={cn(
-                (hideClearAllButton ||
-                  disabled ||
-                  selected.length < 1 ||
-                  selected.filter((s) => s.fixed).length === selected.length) &&
-                  "hidden"
-              )}
-            >
-              <X />
-            </button>
+            {!hideClearAllButton && selected.length > 0 && !disabled && (
+              <Button
+                variant={"ghost"}
+                className={cn(
+                  "h-auto rounded-[5px] px-1.5 py-0.5 text-white hover:bg-purple-700 dark:hover:bg-purple-700"
+                )}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setSelected([]);
+                    onChange?.([]);
+                  }
+                }}
+                onClick={() => {
+                  setSelected([]);
+                  onChange?.([]);
+                }}
+              >
+              Clear
+            </Button>
+            )}
           </div>
         </div>
-        <div className="relative">
+        <div className="relative mt-1">
           {open && (
-            <CommandList
-              className="absolute top-1 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
-              onMouseLeave={() => {
-                mouseOn.current = false;
-              }}
-              onMouseEnter={() => {
-                mouseOn.current = true;
-              }}
-              onMouseUp={() => {
-                inputRef.current?.focus();
-              }}
-            >
-              {isLoading ? (
-                <>{loadingIndicator}</>
-              ) : (
-                <>
-                  {EmptyItem()}
-                  {CreatableItem()}
-                  {!selectFirstItem && (
-                    <CommandItem value="-" className="hidden" />
-                  )}
-                  {Object.entries(selectables).map(([key, dropdowns]) => (
-                    <CommandGroup
-                      key={key}
-                      heading={key}
-                      className="h-full overflow-auto"
-                    >
-                      <>
-                        {dropdowns.map((option) => {
-                          return (
-                            <CommandItem
-                              key={option.value}
-                              value={option.value}
-                              disabled={option.disable}
-                              onMouseDown={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                              }}
-                              onSelect={() => {
-                                if (selected.length >= maxSelected) {
-                                  onMaxSelected?.(selected.length);
-                                  return;
-                                }
-                                setInputValue("");
-                                const newOptions = [...selected, option];
-                                setSelected(newOptions);
-                                onChange?.(newOptions);
-                              }}
-                              className={cn(
-                                "cursor-pointer",
-                                option.disable &&
-                                  "cursor-default text-muted-foreground"
-                              )}
-                            >
-                              {option.label}
-                            </CommandItem>
-                          );
-                        })}
-                      </>
-                    </CommandGroup>
-                  ))}
-                </>
-              )}
-            </CommandList>
+            <div className="absolute top-0 z-10 w-full rounded-md border border-[#2c2e3b] bg-[#181920] text-popover-foreground shadow-md outline-none animate-in">
+              <div className="flex justify-end p-2 border-b border-[#2c2e3b]">
+                <button
+                  type="button"
+                  className="rounded-full p-1.5 bg-[#2c2e3b] hover:bg-purple-700 transition-all duration-300"
+                  onClick={() => setOpen(false)}
+                >
+                  <X className="h-4 w-4 text-white" />
+                </button>
+              </div>
+              <CommandList>
+                {isLoading ? (
+                  <CommandPrimitive.Loading
+                    className="py-6 text-center text-sm"
+                    {...commandProps?.loadingProps}
+                  >
+                    {loadingIndicator}
+                  </CommandPrimitive.Loading>
+                ) : (
+                  <>
+                    {EmptyItem()}
+                    {CreatableItem()}
+                    {Object.entries(selectables).map(([category, options]) => (
+                      <CommandGroup
+                        key={category}
+                        heading={category}
+                        className="h-full overflow-auto"
+                      >
+                        <>
+                          {options.map((option) => {
+                            return (
+                              <CommandItem
+                                key={option.value}
+                                value={option.value}
+                                disabled={option.disable}
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                }}
+                                onSelect={() => {
+                                  if (selected.length >= maxSelected) {
+                                    onMaxSelected?.(selected.length);
+                                    return;
+                                  }
+                                  setInputValue("");
+                                  const newOptions = [...selected, option];
+                                  setSelected(newOptions);
+                                  onChange?.(newOptions);
+                                }}
+                                className={cn(
+                                  "cursor-pointer text-white hover:bg-[#2c2e3b]",
+                                  option.disable &&
+                                    "cursor-default text-muted-foreground"
+                                )}
+                              >
+                                {option.label}
+                              </CommandItem>
+                            );
+                          })}
+                        </>
+                      </CommandGroup>
+                    ))}
+                  </>
+                )}
+              </CommandList>
+            </div>
           )}
         </div>
       </Command>

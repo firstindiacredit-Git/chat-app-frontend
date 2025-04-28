@@ -24,15 +24,15 @@ const ChatContainer = () => {
   return (
     <div className={`
       ${isMobileView ? 'fixed top-0 left-0 h-[100vh] w-[100vw] z-10' : 'md:static md:flex-1'}
-      flex flex-col 
+      flex flex-col relative
     `}>
       <div></div>
       <img src="./assets/background.png" alt="" />
       <ChatHeader />
-      <MessageContainer />
-      <div className="shadow border-t border-black bg-[#0A0A0A]">
-        <MessageBar />
+      <div className={`flex-1 overflow-y-auto ${isMobileView ? 'pb-16' : ''}`}>
+        <MessageContainer />
       </div>
+      <MessageBar />
     </div>
   );
 };
