@@ -25,12 +25,15 @@ const ChatContainer = () => {
   
   return (
     <div className={`
-      ${isMobileView ? 'fixed top-0 left-0 h-[100vh] w-[100vw] z-10' : 'md:static md:flex-1'}
+      ${isMobileView ? 'fixed top-0 left-0 h-screen w-screen z-10' : 'md:static md:flex-1'}
       flex flex-col relative
       bg-[#0a0a0a]
+      overflow-hidden
     `}>
-      <ChatHeader />
-      <div className={`flex-1 overflow-y-auto ${isMobileView ? 'pb-16' : 'pb-20'}`}>
+      <div className="w-full flex-shrink-0 z-20">
+        <ChatHeader />
+      </div>
+      <div className={`flex-1 overflow-y-auto ${isSmallMobile ? 'pb-14' : isMobileView ? 'pb-16' : 'pb-20'}`}>
         <MessageContainer />
       </div>
       <MessageBar />

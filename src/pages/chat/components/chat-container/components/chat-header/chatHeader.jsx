@@ -10,6 +10,7 @@ import apiClient from "@/lib/api-client";
 const ChatHeader = () => {
   const { selectedChatData, closeChat, selectedChatType } = useAppStore();
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth < 380);
   const [showGroupMembers, setShowGroupMembers] = useState(false);
   const [groupMembers, setGroupMembers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,6 +18,7 @@ const ChatHeader = () => {
   useEffect(() => {
     const handleResize = () => {
       setIsMobileView(window.innerWidth < 768);
+      setIsSmallMobile(window.innerWidth < 380);
     };
     
     window.addEventListener('resize', handleResize);
@@ -73,22 +75,23 @@ const ChatHeader = () => {
 
   return (
     <div className={`
-      h-[10vh] border-b-2 border-black flex items-center justify-between 
-      ${isMobileView ? 'px-4' : 'px-20'} bg-[#0A0A0A] relative
+      border-b-2 border-black flex items-center justify-between 
+      ${isSmallMobile ? 'px-2 py-2' : isMobileView ? 'px-3 py-3' : 'px-20 py-4'} bg-[#0A0A0A] relative
     `}>
-      <div className="flex gap-3 items-center">
+      <div className="flex gap-2 md:gap-3 items-center">
         {isMobileView && (
           <button
-            className="text-neutral-300 focus:border-none focus:outline-none focus:text-white transition-all duration-300 mr-1"
+            className="text-neutral-300 focus:border-none focus:outline-none hover:text-white transition-all duration-300"
             onClick={closeChat}
+            aria-label="Back"
           >
-            <ArrowLeft className="text-xl" />
+            <ArrowLeft className={`${isSmallMobile ? 'h-4 w-4' : 'h-5 w-5'}`} />
           </button>
         )}
-        <div className="flex gap-3 items-center justify-center">
-          <div className="w-12 h-12 relative flex items-center justify-center">
+        <div className="flex gap-2 md:gap-3 items-center justify-center">
+          <div className={`${isSmallMobile ? 'w-8 h-8' : 'w-10 h-10 md:w-12 md:h-12'} relative flex items-center justify-center`}>
             {selectedChatType === "contact" ? (
-              <Avatar className="w-12 h-12 rounded-full overflow-hidden">
+              <Avatar className={`${isSmallMobile ? 'w-8 h-8' : 'w-10 h-10 md:w-12 md:h-12'} rounded-full overflow-hidden`}>
                 {selectedChatData.image ? (
                   <AvatarImage
                     src={`${HOST}/${selectedChatData.image}`}
@@ -97,7 +100,7 @@ const ChatHeader = () => {
                   />
                 ) : (
                   <div
-                    className={`uppercase w-12 h-12 text-lg border-[1px] ${getColor(
+                    className={`uppercase ${isSmallMobile ? 'w-8 h-8 text-sm' : 'w-10 h-10 md:w-12 md:h-12 text-base md:text-lg'} border-[1px] ${getColor(
                       selectedChatData.color
                     )} flex items-center justify-center rounded-full`}
                   >
@@ -109,7 +112,7 @@ const ChatHeader = () => {
               </Avatar>
             ) : (
               <div
-                className={`bg-[#ffffff22] py-3 px-5 flex items-center justify-center rounded-full`}
+                className={`bg-[#ffffff22] ${isSmallMobile ? 'py-1.5 px-3 text-sm' : 'py-2 px-4 md:py-3 md:px-5'} flex items-center justify-center rounded-full`}
               >
                 #
               </div>
@@ -118,10 +121,10 @@ const ChatHeader = () => {
           
           {/* Chat name with dropdown for group members */}
           <div 
-            className={`${selectedChatType === "channel" ? "cursor-pointer" : ""} flex items-center gap-1`}
+            className={`${selectedChatType === "channel" ? "cursor-pointer" : ""} flex items-center gap-1 max-w-[180px] md:max-w-none`}
             onClick={selectedChatType === "channel" ? toggleGroupMembers : undefined}
           >
-            <div className={`${isMobileView ? 'text-sm' : ''} truncate`}>
+            <div className={`${isSmallMobile ? 'text-xs' : isMobileView ? 'text-sm' : 'text-base'} truncate text-white font-medium`}>
               {selectedChatType === "channel" && selectedChatData.name}
               {selectedChatType === "contact" &&
               selectedChatData.firstName &&
@@ -132,9 +135,11 @@ const ChatHeader = () => {
             
             {selectedChatType === "channel" && (
               loading ? (
-                <div className="w-4 h-4 border-2 border-t-transparent border-gray-400 rounded-full animate-spin ml-1"></div>
+                <div className={`${isSmallMobile ? 'w-3 h-3' : 'w-4 h-4'} border-2 border-t-transparent border-gray-400 rounded-full animate-spin ml-1`}></div>
               ) : (
-                showGroupMembers ? <ChevronUp size={16} /> : <ChevronDown size={16} />
+                showGroupMembers ? 
+                  <ChevronUp className={`${isSmallMobile ? 'h-3 w-3' : 'h-4 w-4'}`} /> : 
+                  <ChevronDown className={`${isSmallMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
               )
             )}
           </div>
@@ -145,8 +150,9 @@ const ChatHeader = () => {
       {!isMobileView && (
         <div className="flex items-center justify-center gap-5">
           <button
-            className="text-neutral-300 focus:border-none focus:outline-none focus:text-white transition-all duration-300"
+            className="text-neutral-300 focus:border-none focus:outline-none hover:text-white transition-all duration-300"
             onClick={closeChat}
+            aria-label="Close chat"
           >
             <RiCloseFill className="text-3xl" />
           </button>
@@ -155,17 +161,17 @@ const ChatHeader = () => {
       
       {/* Group members dropdown */}
       {showGroupMembers && selectedChatType === "channel" && (
-        <div className="absolute top-full left-0 z-20 w-80 bg-[#1f2c33] shadow-lg rounded-b-md max-h-80 overflow-y-auto">
-          <div className="p-3 border-b border-[#394450] text-gray-300 flex items-center gap-2">
-            <Users size={16} />
-            <span className="text-sm font-medium">Group Members · {groupMembers.length}</span>
+        <div className={`absolute top-full left-0 z-20 ${isSmallMobile ? 'w-full' : 'w-72 md:w-80'} bg-[#1f2c33] shadow-lg rounded-b-md max-h-80 overflow-y-auto`}>
+          <div className="p-2 md:p-3 border-b border-[#394450] text-gray-300 flex items-center gap-2">
+            <Users className={`${isSmallMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
+            <span className={`${isSmallMobile ? 'text-xs' : 'text-sm'} font-medium`}>Group Members · {groupMembers.length}</span>
           </div>
-          <div className="py-2">
+          <div className="py-1 md:py-2">
             {groupMembers.length > 0 ? (
               groupMembers.map(member => (
-                <div key={member._id} className="flex items-center gap-3 px-4 py-2 hover:bg-[#263138]">
-                  <div className="w-10 h-10 relative">
-                    <Avatar className="w-10 h-10 rounded-full overflow-hidden">
+                <div key={member._id} className="flex items-center gap-2 md:gap-3 px-2 md:px-4 py-1.5 md:py-2 hover:bg-[#263138]">
+                  <div className={`${isSmallMobile ? 'w-7 h-7' : 'w-8 h-8 md:w-10 md:h-10'} relative`}>
+                    <Avatar className={`${isSmallMobile ? 'w-7 h-7' : 'w-8 h-8 md:w-10 md:h-10'} rounded-full overflow-hidden`}>
                       {member.image ? (
                         <AvatarImage
                           src={`${HOST}/${member.image}`}
@@ -174,7 +180,7 @@ const ChatHeader = () => {
                         />
                       ) : (
                         <div
-                          className={`uppercase w-10 h-10 text-md border-[1px] ${getColor(
+                          className={`uppercase ${isSmallMobile ? 'w-7 h-7 text-xs' : 'w-8 h-8 md:w-10 md:h-10 text-sm md:text-md'} border-[1px] ${getColor(
                             member.color
                           )} flex items-center justify-center rounded-full`}
                         >
@@ -185,13 +191,13 @@ const ChatHeader = () => {
                       )}
                     </Avatar>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-white text-sm">
+                  <div className="flex flex-col max-w-[180px] md:max-w-none">
+                    <span className={`text-white ${isSmallMobile ? 'text-xs' : 'text-sm'} truncate`}>
                       {member.firstName && member.lastName
                         ? `${member.firstName} ${member.lastName}`
                         : member.email}
                     </span>
-                    <span className="text-gray-400 text-xs">{member.email}</span>
+                    <span className={`text-gray-400 ${isSmallMobile ? 'text-[10px]' : 'text-xs'} truncate`}>{member.email}</span>
                   </div>
                 </div>
               ))
